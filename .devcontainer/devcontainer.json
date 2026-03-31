@@ -1,0 +1,44 @@
+{
+  "name": "RobotFlowLabs ANIMA ROS 2",
+  "build": {
+    "context": "..",
+    "dockerFile": "../docker/Dockerfile",
+    "target": "dev",
+    "args": {
+      "ROS_DISTRO": "jazzy"
+    }
+  },
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/anima/src/robotflowlabs-anima,type=bind,consistency=cached",
+  "workspaceFolder": "/workspaces/anima/src/robotflowlabs-anima",
+  "remoteUser": "ubuntu",
+  "overrideCommand": true,
+  "command": "sleep infinity",
+  "containerEnv": {
+    "ANIMA_HOST_OS": "macos",
+    "ANIMA_PROFILE_NAME": "devcontainer",
+    "ANIMA_WS": "/workspaces/anima"
+  },
+  "mounts": [
+    "source=robotflowlabs-anima-devcontainer-home,target=/home/ubuntu,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools",
+        "ms-python.python",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.exclude": {
+          "**/build": true,
+          "**/install": true,
+          "**/log": true
+        }
+      }
+    }
+  },
+  "postCreateCommand": "bash -lc 'source /opt/ros/jazzy/setup.bash && ros2 --help >/dev/null'"
+}

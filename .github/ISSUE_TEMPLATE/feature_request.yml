@@ -1,0 +1,51 @@
+name: Feature request
+description: Propose a change that improves RobotFlowLabs ANIMA
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for product improvements, new tooling, or adoption-focused changes.
+        If your request is a docs fix, you can also open a documentation issue.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or opportunity
+      placeholder: What user problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      placeholder: Describe the change you want to see.
+    validations:
+      required: true
+  - type: dropdown
+    id: target
+    attributes:
+      label: Target area
+      options:
+        - Mac onboarding
+        - Desktop runtime
+        - Dev experience
+        - Simulation
+        - Docs
+        - CI / release
+        - Public repo / OSS
+    validations:
+      required: true
+  - type: textarea
+    id: success
+    attributes:
+      label: Success criteria
+      placeholder: How would we know this is done well?
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Add screenshots, links, or implementation notes if helpful.

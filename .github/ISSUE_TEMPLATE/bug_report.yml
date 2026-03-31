@@ -1,0 +1,83 @@
+name: Bug report
+description: Report a reproducible problem in RobotFlowLabs ANIMA
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for reproducible defects in the public ANIMA repo.
+        For security issues, follow [the security policy](../docs/SECURITY.md) instead of filing a public bug.
+  - type: input
+    id: distro
+    attributes:
+      label: ROS 2 distro
+      placeholder: jazzy
+    validations:
+      required: true
+  - type: dropdown
+    id: profile
+    attributes:
+      label: Profile
+      options:
+        - desktop
+        - dev
+        - sim
+        - base
+    validations:
+      required: true
+  - type: dropdown
+    id: host_os
+    attributes:
+      label: Host OS
+      options:
+        - macOS Apple Silicon
+        - macOS Intel
+        - Linux
+        - Windows
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command used
+      placeholder: make up
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      placeholder: What happened instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. ...
+        2. ...
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or screenshots
+      description: Paste the relevant log output or attach screenshots.
+      render: shell
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Anything else that will help reproduce the issue.

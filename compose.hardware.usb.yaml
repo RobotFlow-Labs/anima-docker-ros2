@@ -1,0 +1,7 @@
+services:
+  desktop:
+    privileged: true
+    devices:
+      - "${ANIMA_USB_DEVICE_ROOT:-/dev/bus/usb}:/dev/bus/usb"
+    group_add:
+      - plugdev

@@ -1,0 +1,11 @@
+.git
+.github
+.cache
+.idea
+.vscode
+docs
+repositories
+tmp
+*.log
+README.md
+CONTRIBUTING.md

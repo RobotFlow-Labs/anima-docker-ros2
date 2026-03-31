@@ -1,155 +1,207 @@
-# docker-ros2-desktop-vnc
+# RobotFlowLabs ANIMA ROS 2
 
-[![Publish to Registry (Humble)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-humble.yml/badge.svg)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-humble.yml)
-[![Publish to Registry (Iron)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-iron.yml/badge.svg)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-iron.yml)
-[![Publish to Registry (Jazzy)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-jazzy.yml/badge.svg)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-jazzy.yml)
-[![Publish to Registry (Rolling)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-rolling.yml/badge.svg)](https://github.com/Tiryoh/docker-ros2-desktop-vnc/actions/workflows/deploy-rolling.yml)
+RobotFlowLabs ANIMA ROS 2 is a public, free, open-source ROS 2 developer OS built as a layered container stack rather than a single monolithic desktop image.
 
-[![Docker Automated build](https://img.shields.io/docker/automated/tiryoh/ros2-desktop-vnc)](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc)
-[![](https://img.shields.io/docker/pulls/tiryoh/ros2-desktop-vnc.svg)](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc)
-[![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.0-4baaaa.svg)](code_of_conduct.md)
+The goal is simple:
 
-Dockerfiles to provide HTML5 VNC interface to access Ubuntu Desktop + ROS2, based on [AtsushiSaito/docker-ubuntu-sweb](https://github.com/AtsushiSaito/docker-ubuntu-sweb)
+- fast local onboarding for ROS 2 developers
+- modular images for CLI, desktop, dev, and simulation use cases
+- parallel multi-target builds with `docker buildx bake`
+- a single `./anima` CLI for the common local workflow
+- a starter ROS 2 demo package that users can build immediately
+- generated local desktop credentials instead of a hardcoded default password
+- DDS selection and Foxglove bridge support for richer ROS 2 workflows
+- opt-in hardware overlays for USB, serial, camera, and audio passthrough
+- a clean public repo that can evolve independently from upstream references
 
-ROS 1 version: https://github.com/Tiryoh/docker-ros-desktop-vnc
+If you are on a Mac, start with [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md).
+For device passthrough details, see [docs/HARDWARE.md](docs/HARDWARE.md).
 
-![animation](https://github.com/user-attachments/assets/137a5272-f6a3-490f-8bfc-168d082ac949)
+If you want to attach with VS Code, use `.devcontainer/` and reopen the repo in a container.
+See [docs/DEVCONTAINER.md](docs/DEVCONTAINER.md).
 
-There are official ROS 2 Docker images provided by Open Robotics.  
-https://github.com/osrf/docker_images/blob/master/README.md#official-library
+## Community
 
-このツールの詳細については以下の記事で紹介しています。  
-The details of these tools are written in Japanese on this page.  
-https://memoteki.net/archives/2955
+- Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+- Public security guidance: [docs/SECURITY.md](docs/SECURITY.md)
+- Command guide: [docs/COMMANDS.md](docs/COMMANDS.md)
+- Funding: [.github/FUNDING.yml](.github/FUNDING.yml)
+- Issue templates: `.github/ISSUE_TEMPLATE/`
+
+The public issue tracker is for bugs, feature requests, and docs improvements. Security-sensitive reports should follow the private reporting path in the security policy.
+
+## Repository Model
+
+The root of this repository is the RobotFlowLabs ANIMA product repo.
+
+Upstream references are kept locally under `repositories/` and ignored by git. Right now the original `Tiryoh/docker-ros2-desktop-vnc` clone is stored at:
+
+`repositories/docker-ros2-desktop-vnc`
+
+Use it as a reference, not as the tracked source tree.
+
+## Image Layers
+
+The first scaffold defines four build targets:
+
+- `base`: ROS 2 CLI + colcon/vcstool/rosdep + sane shell defaults
+- `desktop`: lightweight remote desktop + noVNC + core ROS GUI tools
+- `dev`: desktop plus common development tools
+- `sim`: dev plus Gazebo / `ros_gz`
+- `sim-nvidia`: Linux/NVIDIA sim path with GPU runtime defaults
+
+Supported distro matrix for the initial public pass:
+
+- `humble`
+- `jazzy`
+- `rolling`
 
 ## Quick Start
 
-Run the docker container and access with port `6080`.  
-Change the `shm-size` value depending on the situation.
+If Docker Desktop is running, the easiest path is:
 
-__NOTE__: `--security-opt seccomp=unconfined` flag is required to launch humble image. See https://github.com/Tiryoh/docker-ros2-desktop-vnc/pull/56.
-
-```
-docker run -p 6080:80 --security-opt seccomp=unconfined --shm-size=512m ghcr.io/tiryoh/ros2-desktop-vnc:humble
+```bash
+make up
 ```
 
-Browse http://127.0.0.1:6080/.
+That command uses the repo helper layer, auto-selects the right env file on macOS, starts the stack, waits for the web UI, and opens the browser.
 
-![default desktop](https://github.com/user-attachments/assets/29ff479f-de54-4032-995d-d1be244ff4e7)
+That is the default adoption path:
 
-## Build
+- best experience on Apple Silicon Macs
+- no local ROS install
+- no local workspace setup
+- no manual port wiring
+- no extra flags
 
-To build Docker image from this Dockerfile, run the following command.
+If you prefer one branded entrypoint instead of Make targets, use:
 
-* dashing (deprecated)
-```sh
-cd dashing && docker build -t tiryoh/ros2-desktop-vnc:dashing .
+```bash
+./anima up
 ```
 
-* eloquent (deprecated)
-```sh
-cd eloquent && docker build -t tiryoh/ros2-desktop-vnc:eloquent .
+Useful follow-ups:
+
+```bash
+./anima status
+./anima env
+./anima password
+./anima demo
+./anima shell
+./anima foxglove dev
+./anima up --hardware usb
 ```
 
-* foxy (deprecated)
-```sh
-cd foxy && docker build -t tiryoh/ros2-desktop-vnc:foxy .
+If you want the raw Compose path instead:
+
+```bash
+./scripts/compose.sh up --build
 ```
 
-* galactic (deprecated)
-```sh
-cd galactic && docker build -t tiryoh/ros2-desktop-vnc:galactic .
+The helper layer auto-selects:
+
+- `.env.mac` on Apple Silicon Macs
+- `.env.intel` on Intel Macs
+- `.env.dev` for the dev profile
+- `.env.sim` for the sim profile
+- `.env` if you create a custom override
+- `ANIMA_HARDWARE_PROFILE` to opt into USB, serial, camera, or audio overlays
+
+Use `./anima env` to see the fully resolved runtime configuration instead of only the selected env filename.
+
+If you want helper commands:
+
+```bash
+make up
+make shell
+make stop
+make demo
+make password
+make foxglove
 ```
 
-* humble
-```sh
-# using "docker build"
-cd humble && docker build -t tiryoh/ros2-desktop-vnc:humble .
-# using "docker buildx" (amd64)
-cd humble && docker buildx build --platform=linux/amd64 --progress=plain -t tiryoh/ros2-desktop-vnc:humble-amd64 .
-# using "docker buildx" (arm64)
-cd humble && docker buildx build --platform=linux/arm64 --progress=plain -t tiryoh/ros2-desktop-vnc:humble-arm64 .
+If you want a bind-mounted host workspace instead of the default named volume:
+
+```bash
+./anima up --bind ./workspace
 ```
 
-* iron
-```sh
-# using "docker build"
-cd iron && docker build -t tiryoh/ros2-desktop-vnc:iron .
-# using "docker buildx" (amd64)
-cd iron && docker buildx build --platform=linux/amd64 --progress=plain -t tiryoh/ros2-desktop-vnc:iron-amd64 .
-# using "docker buildx" (arm64)
-cd iron && docker buildx build --platform=linux/arm64 --progress=plain -t tiryoh/ros2-desktop-vnc:iron-arm64 .
+If you want CycloneDDS instead of Fast DDS:
+
+```bash
+./anima up --dds cyclonedds
 ```
 
-* jazzy
-```sh
-# using "docker build"
-cd jazzy && docker build -t tiryoh/ros2-desktop-vnc:jazzy .
-# using "docker buildx" (amd64)
-cd jazzy && docker buildx build --platform=linux/amd64 --progress=plain -t tiryoh/ros2-desktop-vnc:jazzy-amd64 .
-# using "docker buildx" (arm64)
-cd jazzy && docker buildx build --platform=linux/arm64 --progress=plain -t tiryoh/ros2-desktop-vnc:jazzy-arm64 .
+If you want the Mac-specific path:
+
+Open [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md).
+
+If you are on Linux with an NVIDIA GPU:
+
+```bash
+docker compose up --build sim-nvidia
 ```
 
-* rolling
-```sh
-# using "docker build"
-cd rolling && docker build -t tiryoh/ros2-desktop-vnc:rolling .
-# using "docker buildx" (amd64)
-cd rolling && docker buildx build --platform=linux/amd64 --progress=plain -t tiryoh/ros2-desktop-vnc:rolling-amd64 .
-# using "docker buildx" (arm64)
-cd rolling && docker buildx build --platform=linux/arm64 --progress=plain -t tiryoh/ros2-desktop-vnc:rolling-arm64 .
+To build the GPU matrix:
+
+```bash
+docker buildx bake gpu
 ```
 
-## Docker tags on hub.docker.com
+To build the full image matrix in parallel:
 
-* ~~[`dashing`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=dashing) which is based on [`dashing/Dockerfile`](./dashing/Dockerfile)~~ deprecated
-* ~~[`eloquent`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=eloquent) which is based on [`eloquent/Dockerfile`](./eloquent/Dockerfile)~~ deprecated
-* [`foxy`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=foxy) which is based on [`foxy/Dockerfile`](./foxy/Dockerfile)
-* ~~[`galactic`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=galactic) which is based on [`galactic/Dockerfile`](./galactic/Dockerfile)~~ deprecated
-* [`humble`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=humble), [`latest`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=latest) which is based on [`humble/Dockerfile`](./humble/Dockerfile)
-* [`iron`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=iron) which is based on [`iron/Dockerfile`](./iron/Dockerfile)
-* [`jazzy`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=jazzy) which is based on [`jazzy/Dockerfile`](./jazzy/Dockerfile)
-* [`rolling`](https://hub.docker.com/r/tiryoh/ros2-desktop-vnc/tags?page=1&name=rolling) which is based on [`rolling/Dockerfile`](./rolling/Dockerfile)
-
-Docker tags and build logs are listed on this page.  
-https://github.com/Tiryoh/docker-ros2-desktop-vnc/wiki
-
-## Related projects
-
-* https://github.com/atinfinity/nvidia-egl-desktop-ros2
-  * Dockerfile to use ROS 2 on Xfce Desktop container with NVIDIA GPU support via VNC/[Selkies](https://github.com/selkies-project/selkies-gstreamer)(Full desktop streaming with WebRTC)
-* https://github.com/fcwu/docker-ubuntu-vnc-desktop
-  * Dockerfile to access Ubuntu Xfce/LXDE/LxQT desktop environment via web VNC interface
-* https://github.com/AtsushiSaito/docker-ubuntu-sweb
-  * Dockerfile to access Ubuntu MATE desktop environment via web VNC interface
-
-## License
-
-This repository is released under the Apache License 2.0, see [LICENSE](./LICENSE).  
-Unless attributed otherwise, everything in this repository is under the Apache License 2.0.
-
-```
-Copyright 2020-2025 Tiryoh <tiryoh@gmail.com>
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+```bash
+docker buildx bake
 ```
 
-### Acknowledgements
+To build a single target:
 
-* This Dockerfile is based on [AtsushiSaito/docker-ubuntu-sweb](https://github.com/AtsushiSaito/docker-ubuntu-sweb), licensed under the [Apache License 2.0](https://github.com/AtsushiSaito/docker-ubuntu-sweb/blob/5e7ba8571d2f4d1e4fca0c1527d090c20f7f5e90/LICENSE).
-* This Dockerfile is based on [fcwu/ubuntu-desktop-lxde-vnc](https://github.com/fcwu/docker-ubuntu-vnc-desktop), licensed under the [Apache License 2.0](https://github.com/fcwu/docker-ubuntu-vnc-desktop/blob/60f9ae18e71e9fabbfb23f67b212e64ab72c206e/LICENSE).
+```bash
+docker buildx bake jazzy-dev
+```
 
-## Star History
+Release and image versioning are now driven from [`VERSION`](VERSION). Tagged releases publish multi-arch GHCR images and create a GitHub Release automatically.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=Tiryoh/docker-ros2-desktop-vnc,Tiryoh/docker-ros-desktop-vnc&type=Date)](https://star-history.com/#Tiryoh/docker-ros2-desktop-vnc&Tiryoh/docker-ros-desktop-vnc&Date)
+## Layout
+
+```text
+.
+├── .github/
+│   ├── FUNDING.yml
+│   ├── ISSUE_TEMPLATE/
+│   └── workflows/
+├── docker/
+│   ├── Dockerfile
+│   ├── entrypoint.sh
+│   └── start-desktop.sh
+├── docs/
+│   ├── ARCHITECTURE.md
+│   ├── COMMANDS.md
+│   └── ROADMAP.md
+├── SECURITY.md
+├── CONTRIBUTING.md
+├── Makefile
+├── VERSION
+├── scripts/
+│   ├── start.sh
+│   ├── smoke_demo_workspace.sh
+│   └── sync_reference.sh
+├── examples/
+│   └── robotflowlabs_anima_demo/
+├── compose.yaml
+└── docker-bake.hcl
+```
+
+## Current Status
+
+This is the first RobotFlowLabs ANIMA-native scaffold. The upstream reference has been moved out of the tracked root so we can build a cleaner public OSS product surface from here.
+
+The current scaffold already includes:
+
+- generated local desktop credentials
+- named-volume and bind-mounted workspace modes
+- Fast DDS and CycloneDDS runtime selection
+- Foxglove bridge support on the dev and sim profiles
+- GHCR publishing and multi-arch release automation

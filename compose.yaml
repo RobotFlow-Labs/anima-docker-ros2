@@ -1,0 +1,117 @@
+name: robotflowlabs-anima
+
+services:
+  desktop:
+    platform: ${DOCKER_PLATFORM:-}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: ${ANIMA_PROFILE:-desktop}
+      args:
+        ROS_DISTRO: ${ROS_DISTRO:-jazzy}
+      platforms:
+        - ${DOCKER_PLATFORM:-linux/arm64}
+    image: robotflowlabs-anima-ros2:${ROS_DISTRO:-jazzy}-${ANIMA_PROFILE:-desktop}
+    ports:
+      - "${HOST_NOVNC_PORT:-6080}:6080"
+      - "${HOST_VNC_PORT:-5901}:5901"
+      - "${HOST_WEBRTC_PORT:-8080}:8080"
+      - "${HOST_FOXGLOVE_PORT:-8765}:8765"
+    shm_size: "${SHM_SIZE:-1gb}"
+    environment:
+      NOVNC_PORT: "6080"
+      VNC_PORT: "5901"
+      VNC_PASSWORD: "${VNC_PASSWORD:-}"
+      VNC_GEOMETRY: "${VNC_GEOMETRY:-1600x900}"
+      ANIMA_HOST_OS: "${ANIMA_HOST_OS:-macos}"
+      ANIMA_PROFILE_NAME: "${ANIMA_PROFILE:-desktop}"
+      ANIMA_HARDWARE_PROFILE: "${ANIMA_HARDWARE_PROFILE:-none}"
+      ANIMA_DESKTOP_TRANSPORT: "${ANIMA_DESKTOP_TRANSPORT:-webrtc}"
+      ANIMA_ENABLE_NOVNC: "${ANIMA_ENABLE_NOVNC:-1}"
+      ANIMA_ENABLE_WEBRTC: "${ANIMA_ENABLE_WEBRTC:-1}"
+      ANIMA_DDS_IMPLEMENTATION: "${ANIMA_DDS_IMPLEMENTATION:-fastrtps}"
+      RMW_IMPLEMENTATION: "${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
+      CYCLONEDDS_URI: "${CYCLONEDDS_URI:-}"
+      FASTRTPS_DEFAULT_PROFILES_FILE: "${FASTRTPS_DEFAULT_PROFILES_FILE:-/etc/anima/dds/fastdds.xml}"
+      WEBRTC_PORT: "8080"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/ >/dev/null || curl -fsS http://127.0.0.1:6080/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    volumes:
+      - type: ${ANIMA_WS_MOUNT_TYPE:-volume}
+        source: ${ANIMA_WS_MOUNT_SOURCE:-anima_ws}
+        target: /workspaces/anima
+      - type: volume
+        source: anima_home
+        target: /home/ubuntu
+      - type: bind
+        source: ./config
+        target: /etc/anima
+        read_only: true
+
+  sim-nvidia:
+    profiles: ["nvidia"]
+    platform: ${NVIDIA_PLATFORM:-linux/amd64}
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: sim-nvidia
+      args:
+        ROS_DISTRO: ${ROS_DISTRO:-jazzy}
+      platforms:
+        - ${NVIDIA_PLATFORM:-linux/amd64}
+    image: robotflowlabs-anima-ros2:${ROS_DISTRO:-jazzy}-sim-nvidia
+    gpus: all
+    ports:
+      - "${HOST_NOVNC_PORT:-6080}:6080"
+      - "${HOST_VNC_PORT:-5901}:5901"
+      - "${HOST_WEBRTC_PORT:-8080}:8080"
+      - "${HOST_FOXGLOVE_PORT:-8765}:8765"
+    shm_size: "${SHM_SIZE:-1gb}"
+    environment:
+      NOVNC_PORT: "6080"
+      VNC_PORT: "5901"
+      VNC_PASSWORD: "${VNC_PASSWORD:-}"
+      VNC_GEOMETRY: "${VNC_GEOMETRY:-1600x900}"
+      ANIMA_HOST_OS: "${ANIMA_HOST_OS:-linux-nvidia}"
+      ANIMA_PROFILE_NAME: "sim-nvidia"
+      ANIMA_HARDWARE_PROFILE: "${ANIMA_HARDWARE_PROFILE:-none}"
+      ANIMA_DESKTOP_TRANSPORT: "${ANIMA_DESKTOP_TRANSPORT:-webrtc}"
+      ANIMA_ENABLE_NOVNC: "${ANIMA_ENABLE_NOVNC:-1}"
+      ANIMA_ENABLE_WEBRTC: "${ANIMA_ENABLE_WEBRTC:-1}"
+      ANIMA_DDS_IMPLEMENTATION: "${ANIMA_DDS_IMPLEMENTATION:-fastrtps}"
+      RMW_IMPLEMENTATION: "${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
+      CYCLONEDDS_URI: "${CYCLONEDDS_URI:-}"
+      FASTRTPS_DEFAULT_PROFILES_FILE: "${FASTRTPS_DEFAULT_PROFILES_FILE:-/etc/anima/dds/fastdds.xml}"
+      WEBRTC_PORT: "8080"
+      ANIMA_ENABLE_NVIDIA: "true"
+      NVIDIA_VISIBLE_DEVICES: "${NVIDIA_VISIBLE_DEVICES:-all}"
+      NVIDIA_DRIVER_CAPABILITIES: "${NVIDIA_DRIVER_CAPABILITIES:-compute,utility,graphics,video}"
+      __GLX_VENDOR_LIBRARY_NAME: "${__GLX_VENDOR_LIBRARY_NAME:-nvidia}"
+      __NV_PRIME_RENDER_OFFLOAD: "${__NV_PRIME_RENDER_OFFLOAD:-1}"
+      __VK_LAYER_NV_optimus: "${__VK_LAYER_NV_optimus:-NVIDIA_only}"
+      LIBGL_ALWAYS_SOFTWARE: "${LIBGL_ALWAYS_SOFTWARE:-0}"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/ >/dev/null || curl -fsS http://127.0.0.1:6080/ >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+    volumes:
+      - type: volume
+        source: anima_ws
+        target: /workspaces/anima
+      - type: volume
+        source: anima_home
+        target: /home/ubuntu
+      - type: bind
+        source: ./config
+        target: /etc/anima
+        read_only: true
+
+volumes:
+  anima_ws:
+  anima_home:

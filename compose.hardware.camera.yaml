@@ -1,0 +1,7 @@
+services:
+  desktop:
+    privileged: true
+    devices:
+      - "${ANIMA_CAMERA_DEVICE:-/dev/video0}:${ANIMA_CAMERA_DEVICE:-/dev/video0}"
+    group_add:
+      - video

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: RobotFlowLabs ANIMA Security Policy
+    url: https://github.com/RobotFlow-Labs/anima-docker-ros2/blob/main/SECURITY.md
+    about: Use this for private security reporting guidance, not public vulnerability disclosure.
+  - name: RobotFlowLabs ANIMA Contributing Guide
+    url: https://github.com/RobotFlow-Labs/anima-docker-ros2/blob/main/CONTRIBUTING.md
+    about: Read this before opening a feature request or pull request.

@@ -1,0 +1,28 @@
+name: Question
+description: Ask about using RobotFlowLabs ANIMA
+title: "[Question]: "
+labels:
+  - question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template for usage questions and lightweight support requests.
+        If you found a defect, please use the bug report template instead.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      placeholder: What are you trying to do?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      placeholder: Include the distro, profile, command, and host platform.
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you already tried
+      placeholder: List the steps you already took.

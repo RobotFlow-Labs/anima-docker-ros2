@@ -1,0 +1,7 @@
+services:
+  desktop:
+    privileged: true
+    devices:
+      - "${ANIMA_AUDIO_DEVICE_ROOT:-/dev/snd}:/dev/snd"
+    group_add:
+      - audio

@@ -1,0 +1,7 @@
+services:
+  desktop:
+    privileged: true
+    devices:
+      - "${ANIMA_SERIAL_DEVICE:-/dev/ttyUSB0}:${ANIMA_SERIAL_DEVICE:-/dev/ttyUSB0}"
+    group_add:
+      - dialout

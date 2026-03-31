@@ -1,73 +1,71 @@
-# How to Contribute
+# Contributing to RobotFlowLabs ANIMA
 
-Thank you for your interest and time spent contributing!  
-We welcome contributions from everyone, and to ensure our community stays open and healthy
-we adhere to the [Contributor Covenant](https://www.contributor-covenant.org/), a widely
-used [code of conduct](./CODE_OF_CONDUCT.md) adopted by many other communities such as
-Linux, Autoware, GitLab.
+RobotFlowLabs ANIMA is an open public project. The goal is to keep the repo easy to adopt, easy to review, and easy to maintain.
 
-## Communication
+## Local Policy
 
-First, please read through our [code of conduct](./CODE_OF_CONDUCT.md),
-as we expect all our contributors to follow it.
+The tracked root is the RobotFlowLabs ANIMA repo.
 
-Second, before starting on a project that you intend to contribute to any of our
-projects, we **strongly** recommend posting on the repository's
-[Issues page](https://github.com/Tiryoh/docker-ros2-desktop-vnc/issues)
-and briefly outlining the changes you plan to make.  
-This will enable us to provide
-some context that may be helpful for you. This could range from advice and
-feedback on how to optimally perform your changes or reasons for not doing it.
+Third-party reference repos belong under `repositories/` and stay gitignored.
 
-## Contribution Workflow
+Current local reference:
 
-1. [Create an issue](https://github.com/Tiryoh/docker-ros2-desktop-vnc/issues) defining your intended contribution
-2. Create a fork
-    * For more information about the fork-and-pull model, see the [GitHub Docs](https://docs.github.com/en/get-started/quickstart/contributing-to-projects?tool=webui&platform=linux).
-3. Write code
-4. Create a pull request
-    * Fill the template
-    * For more information about the fork-and-pull model, see the [GitHub Docs](https://docs.github.com/en/get-started/quickstart/contributing-to-projects?tool=webui&platform=linux).
-5. Finish a pull request
-    * In order for a pull request to be merged to docker-ros2-desktop-vnc, it must meet the following criteria:
-        * All discussions on the pull request must be resolved.
-        * All items of the pull request checklist are checked off.
-        * CI jobs for the pull request must have passed successfully.
+- `repositories/docker-ros2-desktop-vnc`
 
-### Pull Requests
+## Local Build
 
-For Pull Requests, please target the `master` branch for any contributions.  
-To contribute, please check out the `master` branch, and then create your feature
-branch from there:
-
-```sh
-git checkout master                # start with the master branch
-git pull origin master             # pull remote repo changes
-git checkout your-feature-branch   # create your feature branch
+```bash
+make up
 ```
-Then when you submit a Pull Request, please select the `master` branch to request
-to merge your commits.
 
-If you are interested in understanding this development style a bit further,
-we follow the [GitHub Flow](https://docs.github.com/en/get-started/quickstart/github-flow)
-model of branching.
+If you want the raw Compose path:
 
-## Guildlines for Development
+```bash
+./scripts/compose.sh up --build
+```
 
-### License
+Or build the matrix in parallel:
 
-docker-ros2-desktop-vnc is licensed under the Apache 2.0 License, and thus all contributions will be licensed as such
-as per clause 5 of the Apache 2.0 License:
+```bash
+docker buildx bake
+```
 
-~~~
-5. Submission of Contributions. Unless You explicitly state otherwise,
-   any Contribution intentionally submitted for inclusion in the Work
-   by You to the Licensor shall be under the terms and conditions of
-   this License, without any additional terms or conditions.
-   Notwithstanding the above, nothing herein shall supersede or modify
-   the terms of any separate license agreement you may have executed
-   with Licensor regarding such Contributions.
-~~~
+## Local Smoke Tests
 
+```bash
+./scripts/smoke_base.sh jazzy
+./scripts/smoke_desktop.sh jazzy
+./scripts/smoke_sim.sh jazzy
+```
 
-This guide is based on https://autowarefoundation.gitlab.io/autoware.auto/AutowareAuto/contributor-guidelines.html#contributors-guidelines-formatting
+## Scope
+
+Prefer:
+
+- shared build logic
+- layered images
+- current supported ROS 2 distros
+- small runtime scripts
+
+Avoid:
+
+- per-distro Dockerfile duplication
+- per-distro workflow duplication
+- hidden local assumptions in the default run path
+
+## Before Opening an Issue or PR
+
+- use `make doctor`
+- reproduce on the smallest relevant profile
+- include the ROS 2 distro and host platform
+- use the GitHub issue templates when filing public issues
+- keep security-sensitive reports out of public issues
+- link the related issue in the pull request when possible
+- include logs for desktop or build failures
+
+## Public Repo Expectations
+
+- keep the default path simple for first-time users
+- preserve Mac-first onboarding
+- prefer layered build targets over one-off runtime hacks
+- keep docs aligned with actual commands

@@ -21,10 +21,20 @@ SELKIES_ENCODER="${SELKIES_ENCODER:-x264enc}"
 SELKIES_FRAMERATE="${SELKIES_FRAMERATE:-30}"
 SELKIES_VIDEO_BITRATE="${SELKIES_VIDEO_BITRATE:-4000}"
 
+export VNC_PASSWORD
+
 mkdir -p "${HOME}/.vnc"
 mkdir -p "${XDG_RUNTIME_DIR}"
 chmod 700 "${XDG_RUNTIME_DIR}"
-printf '%s\n' "${VNC_PASSWORD}" | vncpasswd -f > "${HOME}/.vnc/passwd"
+# Ubuntu Noble's TigerVNC packages do not ship a vncpasswd helper, so
+# generate the VNC auth blob directly before starting tigervncserver.
+python3 - <<'PY' | openssl enc -des-ecb -provider default -provider legacy -K 17526b06234e5807 -nosalt -nopad -out "${HOME}/.vnc/passwd"
+import os
+import sys
+
+password = os.environ["VNC_PASSWORD"].encode("utf-8")[:8].ljust(8, b"\0")
+sys.stdout.buffer.write(password)
+PY
 chmod 600 "${HOME}/.vnc/passwd"
 
 cat > "${HOME}/.vnc/xstartup" <<'EOF'
@@ -39,12 +49,13 @@ rm -f /tmp/.X1-lock
 rm -f /tmp/.X11-unix/X1
 
 vncserver "${DISPLAY}" -geometry "${VNC_GEOMETRY}" -depth "${VNC_DEPTH}" -localhost no
-trap 'vncserver -kill ${DISPLAY} >/dev/null 2>&1 || true' EXIT
 
 declare -a CHILD_PIDS=()
+declare -a CHILD_NAMES=()
 
 cleanup() {
   for pid in "${CHILD_PIDS[@]:-}"; do
+    [[ -z "${pid}" ]] && continue
     kill "${pid}" >/dev/null 2>&1 || true
   done
   vncserver -kill "${DISPLAY}" >/dev/null 2>&1 || true
@@ -54,6 +65,7 @@ trap cleanup EXIT
 if [[ "${ANIMA_ENABLE_NOVNC}" == "1" ]]; then
   python3 -m websockify --web=/usr/share/novnc "${NOVNC_PORT}" "localhost:${VNC_PORT}" &
   CHILD_PIDS+=("$!")
+  CHILD_NAMES+=("novnc")
 fi
 
 if [[ "${ANIMA_ENABLE_WEBRTC}" == "1" ]]; then
@@ -74,6 +86,7 @@ if [[ "${ANIMA_ENABLE_WEBRTC}" == "1" ]]; then
   export SELKIES_APP_WAIT_READY="false"
   selkies-gstreamer &
   CHILD_PIDS+=("$!")
+  CHILD_NAMES+=("webrtc")
 fi
 
 if [[ "${#CHILD_PIDS[@]}" -eq 0 ]]; then
@@ -82,11 +95,23 @@ if [[ "${#CHILD_PIDS[@]}" -eq 0 ]]; then
 fi
 
 while true; do
-  for pid in "${CHILD_PIDS[@]}"; do
+  alive_children=0
+  for i in "${!CHILD_PIDS[@]}"; do
+    pid="${CHILD_PIDS[$i]}"
+    [[ -z "${pid}" ]] && continue
     if ! kill -0 "${pid}" >/dev/null 2>&1; then
-      wait "${pid}"
-      exit $?
+      status=0
+      wait "${pid}" || status=$?
+      echo "[warn] desktop transport '${CHILD_NAMES[$i]}' exited with status ${status}" >&2
+      CHILD_PIDS[$i]=""
+      CHILD_NAMES[$i]=""
+      continue
     fi
+    alive_children=$((alive_children + 1))
   done
+  if (( alive_children == 0 )); then
+    echo "No desktop transports are still running." >&2
+    exit 1
+  fi
   sleep 1
 done

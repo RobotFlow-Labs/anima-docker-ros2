@@ -11,7 +11,7 @@ anima_parse_runtime_args() {
   ANIMA_PARSED_BIND_PATH="${ANIMA_PARSED_BIND_PATH:-}"
   ANIMA_PARSED_DDS="${ANIMA_PARSED_DDS:-}"
   ANIMA_PARSED_HARDWARE="${ANIMA_PARSED_HARDWARE:-none}"
-  ANIMA_PARSED_TRANSPORT="${ANIMA_PARSED_TRANSPORT:-webrtc}"
+  ANIMA_PARSED_TRANSPORT="${ANIMA_PARSED_TRANSPORT:-novnc}"
   ANIMA_PARSED_OPEN_BROWSER="${ANIMA_PARSED_OPEN_BROWSER:-1}"
 
   while [[ $# -gt 0 ]]; do
@@ -87,7 +87,7 @@ anima_validate_hardware() {
 }
 
 anima_validate_transport() {
-  case "${1:-webrtc}" in
+  case "${1:-novnc}" in
     webrtc|novnc)
       ;;
     *)
@@ -153,8 +153,8 @@ anima_apply_runtime_args() {
   export ANIMA_HARDWARE_PROFILE="${ANIMA_PARSED_HARDWARE:-none}"
   export ANIMA_COMPOSE_EXTRA_FILES="$(anima_hardware_compose_files "${ANIMA_HARDWARE_PROFILE}")"
 
-  anima_validate_transport "${ANIMA_PARSED_TRANSPORT:-webrtc}"
-  export ANIMA_DESKTOP_TRANSPORT="${ANIMA_PARSED_TRANSPORT:-webrtc}"
+  anima_validate_transport "${ANIMA_PARSED_TRANSPORT:-novnc}"
+  export ANIMA_DESKTOP_TRANSPORT="${ANIMA_PARSED_TRANSPORT:-novnc}"
 }
 
 anima_socket_wait() {

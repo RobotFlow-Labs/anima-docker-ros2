@@ -13,6 +13,11 @@ ENV_FILE="${ANIMA_ENV_FILE:-$("${ROOT_DIR}/scripts/resolve_env.sh")}"
 STATE_DIR="${ROOT_DIR}/.anima"
 PASSWORD_FILE="${STATE_DIR}/vnc_password"
 
+if [[ ! -f "${ENV_FILE}" ]]; then
+  echo "env file not found: ${ENV_FILE}" >&2
+  return 1 2>/dev/null || exit 1
+fi
+
 generate_password() {
   if command -v openssl >/dev/null 2>&1; then
     openssl rand -base64 18 | tr -dc 'A-Za-z0-9' | head -c 20
@@ -28,16 +33,68 @@ print("".join(secrets.choice(alphabet) for _ in range(20)))
 PY
 }
 
+preserve_runtime_env() {
+  local var
+  for var in "$@"; do
+    if [[ -n "${!var+x}" ]]; then
+      export "ANIMA_PRESERVE_${var}=1"
+      export "ANIMA_PRESERVE_VALUE_${var}=${!var}"
+    fi
+  done
+}
+
+restore_runtime_env() {
+  local var preserve_flag preserve_value_var
+  for var in "$@"; do
+    preserve_flag="ANIMA_PRESERVE_${var}"
+    preserve_value_var="ANIMA_PRESERVE_VALUE_${var}"
+    if [[ -n "${!preserve_flag:-}" ]]; then
+      export "${var}=${!preserve_value_var}"
+      unset "${preserve_flag}" "${preserve_value_var}"
+    fi
+  done
+}
+
+runtime_override_vars=(
+  ANIMA_PROFILE
+  ANIMA_HARDWARE_PROFILE
+  ANIMA_DESKTOP_TRANSPORT
+  ANIMA_DDS_IMPLEMENTATION
+  ANIMA_ENABLE_NOVNC
+  ANIMA_ENABLE_WEBRTC
+  ANIMA_WS_MOUNT_TYPE
+  ANIMA_WS_MOUNT_SOURCE
+  ANIMA_COMPOSE_EXTRA_FILES
+  VNC_PASSWORD
+)
+
+preserve_runtime_env "${runtime_override_vars[@]}"
+
 # shellcheck disable=SC1090
 set -a && source "${ENV_FILE}" && set +a
+
+restore_runtime_env "${runtime_override_vars[@]}"
 
 mkdir -p "${STATE_DIR}"
 export ANIMA_STATE_DIR="${STATE_DIR}"
 export ANIMA_VNC_PASSWORD_FILE="${PASSWORD_FILE}"
 export ANIMA_HARDWARE_PROFILE="${ANIMA_HARDWARE_PROFILE:-none}"
-export ANIMA_DESKTOP_TRANSPORT="${ANIMA_DESKTOP_TRANSPORT:-webrtc}"
-export ANIMA_ENABLE_WEBRTC="${ANIMA_ENABLE_WEBRTC:-1}"
+export ANIMA_DESKTOP_TRANSPORT="${ANIMA_DESKTOP_TRANSPORT:-novnc}"
 export ANIMA_ENABLE_NOVNC="${ANIMA_ENABLE_NOVNC:-1}"
+export SELKIES_BASIC_AUTH_USER="${SELKIES_BASIC_AUTH_USER:-ubuntu}"
+
+case "${ANIMA_DESKTOP_TRANSPORT}" in
+  webrtc)
+    export ANIMA_ENABLE_WEBRTC="1"
+    ;;
+  novnc)
+    export ANIMA_ENABLE_WEBRTC="0"
+    ;;
+  *)
+    echo "unsupported desktop transport: ${ANIMA_DESKTOP_TRANSPORT}" >&2
+    return 1 2>/dev/null || exit 1
+    ;;
+esac
 
 if [[ -z "${VNC_PASSWORD:-}" || "${VNC_PASSWORD}" == "anima" ]]; then
   if [[ ! -s "${PASSWORD_FILE}" ]]; then
@@ -86,15 +143,8 @@ case "${ANIMA_DDS_IMPLEMENTATION:-fastrtps}" in
     ;;
 esac
 
-case "${ANIMA_DESKTOP_TRANSPORT}" in
-  webrtc)
-    export ANIMA_URL="http://127.0.0.1:${HOST_WEBRTC_PORT}"
-    ;;
-  novnc)
-    export ANIMA_URL="http://127.0.0.1:${HOST_NOVNC_PORT:-6080}"
-    ;;
-  *)
-    echo "unsupported desktop transport: ${ANIMA_DESKTOP_TRANSPORT}" >&2
-    return 1 2>/dev/null || exit 1
-    ;;
-esac
+if [[ "${ANIMA_DESKTOP_TRANSPORT}" == "webrtc" ]]; then
+  export ANIMA_URL="http://127.0.0.1:${HOST_WEBRTC_PORT}"
+else
+  export ANIMA_URL="http://127.0.0.1:${HOST_NOVNC_PORT:-6080}"
+fi

@@ -30,7 +30,7 @@ Purpose:
 Purpose:
 
 - build on `base`
-- remote GUI access via TigerVNC + noVNC
+- remote GUI access via TigerVNC with noVNC as the default browser transport and WebRTC kept as an optional path
 - core ROS GUI tools and visualization apps without the full desktop metapackage
 
 ### `dev`
@@ -111,5 +111,5 @@ The current CI verifies:
 
 The next phase should add:
 
-- coverage for hardware-aware profiles and future WebRTC transport
+- coverage for hardware-aware profiles and a resilient WebRTC path
 - a full headless `ros_gz` boot test rather than just launch-file validation

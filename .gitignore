@@ -2,7 +2,13 @@ repositories/
 
 .DS_Store
 .env
-.env.*
+.env.local
+.env.*.local
+!.env.example
+!.env.mac
+!.env.intel
+!.env.dev
+!.env.sim
 .cache/
 .anima/
 .idea/

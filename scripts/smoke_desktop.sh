@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROS_DISTRO="${1:-jazzy}"
-HOST_PORT="${2:-6081}"
+NOVNC_PORT="${2:-6081}"
 IMAGE_TAG="robotflowlabs-anima-smoke-desktop:${ROS_DISTRO}"
 CONTAINER_NAME="robotflowlabs-anima-smoke-desktop-${ROS_DISTRO}"
 
@@ -19,15 +19,17 @@ docker buildx build --load \
 
 docker run -d --rm \
   --name "${CONTAINER_NAME}" \
-  -p "${HOST_PORT}:6080" \
-  "${IMAGE_TAG}"
+  -p "${NOVNC_PORT}:6080" \
+  -e ANIMA_ENABLE_WEBRTC=0 \
+  "${IMAGE_TAG}" \
+  desktop
 
 for _ in {1..30}; do
-  if curl -fsS "http://127.0.0.1:${HOST_PORT}/" >/dev/null; then
+  if curl -fsS "http://127.0.0.1:${NOVNC_PORT}/" >/dev/null; then
     break
   fi
   sleep 2
 done
 
-curl -fsS "http://127.0.0.1:${HOST_PORT}/" >/dev/null
+curl -fsS "http://127.0.0.1:${NOVNC_PORT}/" >/dev/null
 docker exec "${CONTAINER_NAME}" bash -lc 'pgrep -af websockify >/dev/null'

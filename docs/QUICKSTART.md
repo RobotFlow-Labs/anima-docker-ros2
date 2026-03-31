@@ -28,6 +28,7 @@ The startup output now prints:
 Open:
 
 - `http://127.0.0.1:6080`
+- optional WebRTC: `./anima up --transport webrtc`
 
 ## Optional Helper Commands
 
@@ -112,7 +113,8 @@ If you want to inspect the resolved runtime config before starting:
 - distro: `jazzy`
 - profile: `desktop`
 - hardware: `none`
-- web UI port: `6080`
+- primary web UI port: `6080`
+- optional WebRTC port: `8080`
 - VNC port: `5901`
 - primary host target: Apple Silicon Mac
 
@@ -125,6 +127,7 @@ Common changes:
 - `ROS_DISTRO=humble`
 - `ANIMA_PROFILE=dev`
 - `HOST_NOVNC_PORT=7080`
+- `HOST_WEBRTC_PORT=8080`
 - `VNC_PASSWORD=change-me`
 - `ANIMA_DDS_IMPLEMENTATION=cyclonedds`
 - `HOST_FOXGLOVE_PORT=8765`

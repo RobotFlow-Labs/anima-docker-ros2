@@ -37,7 +37,7 @@ The public issue tracker is for bugs, feature requests, and docs improvements. S
 The first scaffold defines four build targets:
 
 - `base`: ROS 2 CLI + colcon/vcstool/rosdep + sane shell defaults
-- `desktop`: lightweight remote desktop + noVNC + core ROS GUI tools
+- `desktop`: lightweight remote desktop with noVNC by default, optional WebRTC experiments, and core ROS GUI tools
 - `dev`: desktop plus common development tools
 - `sim`: dev plus Gazebo / `ros_gz`
 - `sim-nvidia`: Linux/NVIDIA sim path with GPU runtime defaults
@@ -82,6 +82,7 @@ Useful follow-ups:
 ./anima shell
 ./anima foxglove dev
 ./anima up --hardware usb
+./anima up --transport webrtc
 ```
 
 If you want the raw Compose path instead:
@@ -100,6 +101,7 @@ The helper layer auto-selects:
 - `ANIMA_HARDWARE_PROFILE` to opt into USB, serial, camera, or audio overlays
 
 Use `./anima env` to see the fully resolved runtime configuration instead of only the selected env filename.
+The default browser URL is the noVNC desktop on `http://127.0.0.1:6080`. WebRTC remains an opt-in best-effort path on `http://127.0.0.1:8080`.
 
 If you want helper commands:
 

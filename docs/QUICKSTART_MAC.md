@@ -31,6 +31,7 @@ Or:
 Open:
 
 - `http://127.0.0.1:6080`
+- optional WebRTC: `./anima up --transport webrtc`
 
 ## 3. Use It
 

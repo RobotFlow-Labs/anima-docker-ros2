@@ -12,6 +12,7 @@ services:
       platforms:
         - ${DOCKER_PLATFORM:-linux/arm64}
     image: robotflowlabs-anima-ros2:${ROS_DISTRO:-jazzy}-${ANIMA_PROFILE:-desktop}
+    command: ["desktop"]
     ports:
       - "${HOST_NOVNC_PORT:-6080}:6080"
       - "${HOST_VNC_PORT:-5901}:5901"
@@ -26,16 +27,16 @@ services:
       ANIMA_HOST_OS: "${ANIMA_HOST_OS:-macos}"
       ANIMA_PROFILE_NAME: "${ANIMA_PROFILE:-desktop}"
       ANIMA_HARDWARE_PROFILE: "${ANIMA_HARDWARE_PROFILE:-none}"
-      ANIMA_DESKTOP_TRANSPORT: "${ANIMA_DESKTOP_TRANSPORT:-webrtc}"
+      ANIMA_DESKTOP_TRANSPORT: "${ANIMA_DESKTOP_TRANSPORT:-novnc}"
       ANIMA_ENABLE_NOVNC: "${ANIMA_ENABLE_NOVNC:-1}"
-      ANIMA_ENABLE_WEBRTC: "${ANIMA_ENABLE_WEBRTC:-1}"
+      ANIMA_ENABLE_WEBRTC: "${ANIMA_ENABLE_WEBRTC:-0}"
       ANIMA_DDS_IMPLEMENTATION: "${ANIMA_DDS_IMPLEMENTATION:-fastrtps}"
       RMW_IMPLEMENTATION: "${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
       CYCLONEDDS_URI: "${CYCLONEDDS_URI:-}"
       FASTRTPS_DEFAULT_PROFILES_FILE: "${FASTRTPS_DEFAULT_PROFILES_FILE:-/etc/anima/dds/fastdds.xml}"
       WEBRTC_PORT: "8080"
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/ >/dev/null || curl -fsS http://127.0.0.1:6080/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS -u \"${SELKIES_BASIC_AUTH_USER:-ubuntu}:${VNC_PASSWORD:-anima}\" http://127.0.0.1:8080/ >/dev/null || curl -fsS http://127.0.0.1:6080/ >/dev/null || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -64,6 +65,7 @@ services:
       platforms:
         - ${NVIDIA_PLATFORM:-linux/amd64}
     image: robotflowlabs-anima-ros2:${ROS_DISTRO:-jazzy}-sim-nvidia
+    command: ["desktop"]
     gpus: all
     ports:
       - "${HOST_NOVNC_PORT:-6080}:6080"
@@ -79,9 +81,9 @@ services:
       ANIMA_HOST_OS: "${ANIMA_HOST_OS:-linux-nvidia}"
       ANIMA_PROFILE_NAME: "sim-nvidia"
       ANIMA_HARDWARE_PROFILE: "${ANIMA_HARDWARE_PROFILE:-none}"
-      ANIMA_DESKTOP_TRANSPORT: "${ANIMA_DESKTOP_TRANSPORT:-webrtc}"
+      ANIMA_DESKTOP_TRANSPORT: "${ANIMA_DESKTOP_TRANSPORT:-novnc}"
       ANIMA_ENABLE_NOVNC: "${ANIMA_ENABLE_NOVNC:-1}"
-      ANIMA_ENABLE_WEBRTC: "${ANIMA_ENABLE_WEBRTC:-1}"
+      ANIMA_ENABLE_WEBRTC: "${ANIMA_ENABLE_WEBRTC:-0}"
       ANIMA_DDS_IMPLEMENTATION: "${ANIMA_DDS_IMPLEMENTATION:-fastrtps}"
       RMW_IMPLEMENTATION: "${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}"
       CYCLONEDDS_URI: "${CYCLONEDDS_URI:-}"
@@ -95,7 +97,7 @@ services:
       __VK_LAYER_NV_optimus: "${__VK_LAYER_NV_optimus:-NVIDIA_only}"
       LIBGL_ALWAYS_SOFTWARE: "${LIBGL_ALWAYS_SOFTWARE:-0}"
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8080/ >/dev/null || curl -fsS http://127.0.0.1:6080/ >/dev/null || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS -u \"${SELKIES_BASIC_AUTH_USER:-ubuntu}:${VNC_PASSWORD:-anima}\" http://127.0.0.1:8080/ >/dev/null || curl -fsS http://127.0.0.1:6080/ >/dev/null || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 12

@@ -4,6 +4,7 @@
 
 - container user defaults to non-root `ubuntu`
 - noVNC is exposed on port `6080`
+- WebRTC can be exposed on port `8080` with basic auth when explicitly enabled
 - VNC is exposed on port `5901`
 - Foxglove bridge can be exposed on port `8765` when the dev or sim profile starts it
 - the default Mac path uses Docker Desktop, which is a shared desktop/runtime environment rather than a hardened appliance
@@ -39,6 +40,5 @@ Practical guidance:
 
 ## Future Hardening
 
-- add a WebRTC transport path
 - add smoke tests that verify the desktop comes up without privileged container assumptions
 - expand security guidance for Foxglove and DDS network exposure

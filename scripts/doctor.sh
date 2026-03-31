@@ -32,6 +32,7 @@ echo "[info] transport: ${ANIMA_DESKTOP_TRANSPORT}"
 echo "[info] workspace mount: ${ANIMA_WS_MOUNT_TYPE}:${ANIMA_WS_MOUNT_SOURCE}"
 echo "[info] compose overlays: ${ANIMA_COMPOSE_EXTRA_FILES:-none}"
 
+check "env file" test -f "${ENV_FILE}"
 check "docker CLI" command -v docker
 check "docker compose" docker compose version
 check "docker daemon" docker info
@@ -130,6 +131,6 @@ echo "[info] run sim profile: make up-sim"
 echo "[info] hardware runs: make up-usb | make up-serial | make up-camera | make up-audio"
 echo "[info] open: make open"
 echo "[info] shell: make shell"
-echo "[info] novnc fallback: ./anima up --transport novnc"
+echo "[info] experimental webrtc: ./anima up --transport webrtc"
 echo "[info] foxglove: ./anima foxglove dev"
 echo "[info] password: ./anima password"

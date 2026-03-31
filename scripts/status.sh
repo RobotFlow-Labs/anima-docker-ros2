@@ -46,10 +46,25 @@ host_port() {
   docker port "${CONTAINER_ID}" "${container_port}" 2>/dev/null | awk -F: 'NR==1 {print $NF}'
 }
 
+probe_transport() {
+  local transport="$1"
+  case "${transport}" in
+    webrtc)
+      [[ -n "${WEBRTC_PORT:-}" ]] || return 1
+      curl -fsS -u "${SELKIES_BASIC_AUTH_USER}:${VNC_PASSWORD}" "http://127.0.0.1:${WEBRTC_PORT}" >/dev/null 2>&1
+      ;;
+    novnc)
+      [[ -n "${NOVNC_PORT:-}" ]] || return 1
+      curl -fsS "http://127.0.0.1:${NOVNC_PORT}" >/dev/null 2>&1
+      ;;
+  esac
+}
+
 RUNNING_PROFILE="$(container_env ANIMA_PROFILE_NAME)"
 RUNNING_DDS="$(container_env ANIMA_DDS_IMPLEMENTATION)"
 RUNNING_HARDWARE="$(container_env ANIMA_HARDWARE_PROFILE)"
 RUNNING_TRANSPORT="$(container_env ANIMA_DESKTOP_TRANSPORT)"
+RUNNING_WEBRTC_ENABLED="$(container_env ANIMA_ENABLE_WEBRTC)"
 RUNNING_RMW="$(container_env RMW_IMPLEMENTATION)"
 RUNNING_WORKSPACE="$(workspace_mount)"
 NOVNC_PORT="$(host_port 6080/tcp)"
@@ -61,18 +76,36 @@ HEALTH="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{
 IMAGE="$(docker inspect --format '{{.Config.Image}}' "${CONTAINER_ID}")"
 STARTED_AT="$(docker inspect --format '{{.State.StartedAt}}' "${CONTAINER_ID}")"
 RUNNING_DISTRO="$(awk -F: 'NR==1 {print $2}' <<<"${IMAGE}" | awk -F- 'NR==1 {print $1}')"
+ACTIVE_TRANSPORT=""
+
+if [[ "${RUNNING_TRANSPORT:-${ANIMA_DESKTOP_TRANSPORT}}" == "webrtc" ]] && probe_transport webrtc; then
+  ACTIVE_TRANSPORT="webrtc"
+elif probe_transport novnc; then
+  ACTIVE_TRANSPORT="novnc"
+elif probe_transport webrtc; then
+  ACTIVE_TRANSPORT="webrtc"
+fi
+
+if [[ "${ACTIVE_TRANSPORT}" == "webrtc" ]]; then
+  URL="http://127.0.0.1:${WEBRTC_PORT}"
+elif [[ "${ACTIVE_TRANSPORT}" == "novnc" ]]; then
+  URL="http://127.0.0.1:${NOVNC_PORT}"
+fi
 
 echo "[info] profile: ${RUNNING_PROFILE:-${PROFILE}}"
 echo "[info] env file: ${ENV_FILE}"
 echo "[info] distro: ${RUNNING_DISTRO:-${ROS_DISTRO:-jazzy}}"
 echo "[info] dds: ${RUNNING_DDS:-${ANIMA_DDS_IMPLEMENTATION}}"
 echo "[info] hardware: ${RUNNING_HARDWARE:-${ANIMA_HARDWARE_PROFILE}}"
-echo "[info] transport: ${RUNNING_TRANSPORT:-${ANIMA_DESKTOP_TRANSPORT}}"
+echo "[info] transport: ${ACTIVE_TRANSPORT:-${RUNNING_TRANSPORT:-${ANIMA_DESKTOP_TRANSPORT}}}"
+if [[ -n "${ACTIVE_TRANSPORT}" && "${ACTIVE_TRANSPORT}" != "${RUNNING_TRANSPORT:-${ANIMA_DESKTOP_TRANSPORT}}" ]]; then
+  echo "[info] requested transport: ${RUNNING_TRANSPORT:-${ANIMA_DESKTOP_TRANSPORT}}"
+fi
 echo "[info] rmw: ${RUNNING_RMW:-${RMW_IMPLEMENTATION}}"
 echo "[info] workspace mount: ${RUNNING_WORKSPACE:-${ANIMA_WS_MOUNT_TYPE}:${ANIMA_WS_MOUNT_SOURCE}}"
 echo "[info] compose overlays: ${ANIMA_COMPOSE_EXTRA_FILES:-none}"
 echo "[info] url: ${URL}"
-if [[ -n "${WEBRTC_PORT}" ]]; then
+if [[ "${RUNNING_WEBRTC_ENABLED}" == "1" && -n "${WEBRTC_PORT}" ]]; then
   echo "[info] webrtc port: ${WEBRTC_PORT}"
 fi
 if [[ -n "${NOVNC_PORT}" ]]; then

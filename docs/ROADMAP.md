@@ -26,8 +26,7 @@
 
 ## Next Transport Pass
 
-- support WebRTC streaming as the preferred remote desktop path
-- keep noVNC as a fallback
+- harden the WebRTC path so it can be promoted from optional to default
 - reduce image size and startup latency
 - improve Apple Silicon startup time and first-run latency
 

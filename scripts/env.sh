@@ -20,8 +20,13 @@ echo "[info] transport: ${ANIMA_DESKTOP_TRANSPORT}"
 echo "[info] distro: ${ROS_DISTRO:-jazzy}"
 echo "[info] target platform: ${DOCKER_PLATFORM}"
 echo "[info] primary url: ${ANIMA_URL}"
-echo "[info] WebRTC url: http://127.0.0.1:${HOST_WEBRTC_PORT}"
 echo "[info] noVNC url: http://127.0.0.1:${HOST_NOVNC_PORT}"
+if [[ "${ANIMA_ENABLE_WEBRTC}" == "1" ]]; then
+  echo "[info] WebRTC url: http://127.0.0.1:${HOST_WEBRTC_PORT}"
+  echo "[info] WebRTC auth user: ${SELKIES_BASIC_AUTH_USER}"
+else
+  echo "[info] WebRTC: disabled by current transport defaults"
+fi
 echo "[info] VNC port: ${HOST_VNC_PORT}"
 echo "[info] Foxglove port: ${HOST_FOXGLOVE_PORT}"
 echo "[info] dds: ${ANIMA_DDS_IMPLEMENTATION}"

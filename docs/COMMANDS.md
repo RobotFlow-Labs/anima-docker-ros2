@@ -32,6 +32,7 @@ With runtime options:
 ./anima up --bind ./workspace
 ./anima up dev --dds cyclonedds
 ./anima foxglove dev --dds cyclonedds
+./anima up --transport webrtc
 ./anima up --hardware usb
 ./anima up --hardware serial
 ```
@@ -65,7 +66,7 @@ Reset the generated local desktop password:
 ```
 
 `./anima env` prints the resolved runtime config.
-`./anima status` inspects the running container and shows the actual DDS, hardware profile, workspace mount, and Foxglove socket instead of only local defaults.
+`./anima status` inspects the running container and shows the actual DDS, hardware profile, workspace mount, transport, and Foxglove socket instead of only local defaults.
 
 ## Workspace Movement
 

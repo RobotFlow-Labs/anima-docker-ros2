@@ -27,7 +27,8 @@ Includes everything in `base`, plus:
 - RViz, RQt, turtlesim, demo nodes, and image tools
 - Xfce
 - TigerVNC
-- noVNC
+- noVNC desktop transport
+- optional WebRTC transport
 
 ### `dev`
 

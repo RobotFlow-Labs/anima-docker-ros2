@@ -23,6 +23,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gosu \
     locales \
     lsb-release \
+    openssl \
     python3-colcon-common-extensions \
     python3-pip \
     python3-rosdep \
@@ -93,13 +94,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-${ROS_DISTRO}-rqt-common-plugins \
     ros-${ROS_DISTRO}-rviz2 \
     ros-${ROS_DISTRO}-turtlesim && \
-    curl -fsSLo /tmp/selkies.whl "https://github.com/selkies-project/selkies-gstreamer/releases/download/${SELKIES_TAG}/selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSLo "/tmp/selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" "https://github.com/selkies-project/selkies-gstreamer/releases/download/${SELKIES_TAG}/selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" && \
     curl -fsSLo /tmp/gst-web.tar.gz "https://github.com/selkies-project/selkies-gstreamer/releases/download/${SELKIES_TAG}/selkies-gstreamer-web_${SELKIES_TAG}.tar.gz" && \
-    python3 -m pip install --no-cache-dir /tmp/selkies.whl && \
+    python3 -m pip install --no-cache-dir --break-system-packages "/tmp/selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" && \
+    python3 -c "from pathlib import Path; path = Path('/usr/local/lib/python3.12/dist-packages/selkies_gstreamer/gstwebrtc_app.py'); text = path.read_text(); text = text.replace('    fract = Gst.Fraction(60, 1)\\n', '    fract = Gst.caps_from_string(\\\"video/x-raw,framerate=60/1\\\")\\n'); text = text.replace('        self.ximagesrc_caps.set_value(\\\"framerate\\\", Gst.Fraction(self.framerate, 1))\\n', '        self.ximagesrc_caps = Gst.caps_from_string(f\\\"video/x-raw,framerate={self.framerate}/1\\\")\\n'); path.write_text(text)" && \
     mkdir -p /opt && \
     tar -xzf /tmp/gst-web.tar.gz -C /opt && \
-    rm -f /tmp/selkies.whl /tmp/gst-web.tar.gz && \
-    rm -rf /var/lib/apt/lists/*
+    rm -f "/tmp/selkies_gstreamer-${SELKIES_VERSION}-py3-none-any.whl" /tmp/gst-web.tar.gz
 
 COPY docker/start-desktop.sh /usr/local/bin/anima-desktop
 RUN chmod +x /usr/local/bin/anima-desktop && \

@@ -12,7 +12,7 @@ The goal is simple:
 - generated local desktop credentials instead of a hardcoded default password
 - DDS selection and Foxglove bridge support for richer ROS 2 workflows
 - opt-in hardware overlays for USB, serial, camera, and audio passthrough
-- a clean public repo that can evolve independently from upstream references
+- a clean product repo with local upstream references kept outside the tracked source tree
 
 If you are on a Mac, start with [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md).
 For device passthrough details, see [docs/HARDWARE.md](docs/HARDWARE.md).
@@ -31,16 +31,6 @@ See [docs/DEVCONTAINER.md](docs/DEVCONTAINER.md).
 - Issue templates: `.github/ISSUE_TEMPLATE/`
 
 The public issue tracker is for bugs, feature requests, and docs improvements. Security-sensitive reports should follow the private reporting path in the security policy.
-
-## Repository Model
-
-The root of this repository is the RobotFlowLabs ANIMA product repo.
-
-Upstream references are kept locally under `repositories/` and ignored by git. Right now the original `Tiryoh/docker-ros2-desktop-vnc` clone is stored at:
-
-`repositories/docker-ros2-desktop-vnc`
-
-Use it as a reference, not as the tracked source tree.
 
 ## Image Layers
 
@@ -196,7 +186,9 @@ Release and image versioning are now driven from [`VERSION`](VERSION). Tagged re
 
 ## Current Status
 
-This is the first RobotFlowLabs ANIMA-native scaffold. The upstream reference has been moved out of the tracked root so we can build a cleaner public OSS product surface from here.
+This repository root is the RobotFlowLabs ANIMA product repo.
+
+The original `Tiryoh/docker-ros2-desktop-vnc` clone is kept locally under `repositories/docker-ros2-desktop-vnc` and stays gitignored. It is a reference implementation, not the tracked source tree.
 
 The current scaffold already includes:
 

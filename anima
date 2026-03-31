@@ -22,6 +22,7 @@ Usage:
   ./anima password [show|reset]
   ./anima foxglove [dev|sim] [--bind PATH] [--dds fastrtps|cyclonedds] [--no-open]
   ./anima demo [--force]
+  ./anima module [list|show|install] [MODULE_ID] [--force]
   ./anima import <path>
   ./anima export <path>
   ./anima bake
@@ -110,6 +111,9 @@ case "${command_name}" in
     ;;
   demo)
     exec "${ROOT_DIR}/scripts/demo_workspace.sh" "$@"
+    ;;
+  module|modules)
+    exec "${ROOT_DIR}/scripts/modules.sh" "$@"
     ;;
   import)
     exec "${ROOT_DIR}/scripts/import_workspace.sh" "${1:-}"

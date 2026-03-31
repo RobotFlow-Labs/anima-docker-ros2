@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: help up up-dev up-sim up-usb up-serial up-camera up-audio build build-dev build-sim shell shell-dev shell-sim shell-usb shell-serial shell-camera shell-audio logs stop clean bake doctor open import export status url demo install-cli env password foxglove
+.PHONY: help up up-dev up-sim up-usb up-serial up-camera up-audio build build-dev build-sim shell shell-dev shell-sim shell-usb shell-serial shell-camera shell-audio logs stop clean bake doctor open import export status url demo modules install-cli env password foxglove
 
 help:
 	@echo "Targets:"
@@ -30,6 +30,7 @@ help:
 	@echo "  make status  - show the active env, URL, and container health"
 	@echo "  make url     - print the current ANIMA URL"
 	@echo "  make demo    - seed the workspace with a RobotFlowLabs demo package"
+	@echo "  make modules - list the bundled ANIMA module bundles"
 	@echo "  make install-cli - install the local anima CLI into ~/.local/bin"
 	@echo "  make env     - print the resolved runtime configuration"
 	@echo "  make password - print the current local desktop password"
@@ -114,6 +115,9 @@ url:
 
 demo:
 	./anima demo
+
+modules:
+	./anima module list
 
 install-cli:
 	./anima install-cli

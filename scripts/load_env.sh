@@ -7,6 +7,8 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 fi
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+HOST_OS="$(uname -s)"
+HOST_ARCH="$(uname -m)"
 # shellcheck disable=SC1090
 source "${ROOT_DIR}/scripts/cli_helpers.sh"
 ENV_FILE="${ANIMA_ENV_FILE:-$("${ROOT_DIR}/scripts/resolve_env.sh")}"
@@ -65,6 +67,12 @@ runtime_override_vars=(
   ANIMA_WS_MOUNT_TYPE
   ANIMA_WS_MOUNT_SOURCE
   ANIMA_COMPOSE_EXTRA_FILES
+  ANIMA_HOST_OS
+  DOCKER_PLATFORM
+  HOST_FOXGLOVE_PORT
+  HOST_WEBRTC_PORT
+  HOST_NOVNC_PORT
+  HOST_VNC_PORT
   VNC_PASSWORD
 )
 
@@ -110,6 +118,33 @@ fi
 
 export HOST_FOXGLOVE_PORT="${HOST_FOXGLOVE_PORT:-8765}"
 export HOST_WEBRTC_PORT="${HOST_WEBRTC_PORT:-8080}"
+export HOST_NOVNC_PORT="${HOST_NOVNC_PORT:-6080}"
+export HOST_VNC_PORT="${HOST_VNC_PORT:-5901}"
+
+if [[ -z "${DOCKER_PLATFORM:-}" ]]; then
+  case "${HOST_ARCH}" in
+    x86_64|amd64)
+      export DOCKER_PLATFORM="linux/amd64"
+      ;;
+    arm64|aarch64)
+      export DOCKER_PLATFORM="linux/arm64"
+      ;;
+  esac
+fi
+
+if [[ -z "${ANIMA_HOST_OS:-}" ]]; then
+  case "${HOST_OS}" in
+    Darwin)
+      export ANIMA_HOST_OS="macos"
+      ;;
+    Linux)
+      export ANIMA_HOST_OS="linux"
+      ;;
+    *)
+      export ANIMA_HOST_OS="$(tr '[:upper:]' '[:lower:]' <<<"${HOST_OS}")"
+      ;;
+  esac
+fi
 
 ANIMA_WS_MOUNT_TYPE="${ANIMA_WS_MOUNT_TYPE:-volume}"
 if [[ "${ANIMA_WS_MOUNT_TYPE}" == "bind" ]]; then

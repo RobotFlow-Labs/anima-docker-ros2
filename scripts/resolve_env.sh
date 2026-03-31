@@ -12,11 +12,6 @@ if [[ -f "${ROOT_DIR}/.env" ]]; then
 fi
 
 if [[ "${HOST_OS}" == "Darwin" ]]; then
-  if [[ "${PROFILE}" != "desktop" && -f "${ROOT_DIR}/.env.${PROFILE}" ]]; then
-    echo "${ROOT_DIR}/.env.${PROFILE}"
-    exit 0
-  fi
-
   if [[ "${HOST_ARCH}" == "x86_64" && -f "${ROOT_DIR}/.env.intel" ]]; then
     echo "${ROOT_DIR}/.env.intel"
     exit 0
@@ -26,6 +21,11 @@ if [[ "${HOST_OS}" == "Darwin" ]]; then
     echo "${ROOT_DIR}/.env.mac"
     exit 0
   fi
+fi
+
+if [[ "${PROFILE}" != "desktop" && -f "${ROOT_DIR}/.env.${PROFILE}" ]]; then
+  echo "${ROOT_DIR}/.env.${PROFILE}"
+  exit 0
 fi
 
 if [[ -f "${ROOT_DIR}/.env.example" ]]; then

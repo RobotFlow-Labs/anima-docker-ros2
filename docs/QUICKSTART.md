@@ -37,6 +37,7 @@ make up
 make shell
 make stop
 make demo
+make modules
 make env
 make password
 make foxglove
@@ -71,6 +72,13 @@ If you want the starter ROS 2 package in the named workspace volume:
 
 ```bash
 ./anima demo
+```
+
+If you want the bundled ANIMA starter modules instead:
+
+```bash
+./anima module list
+./anima module install starter
 ```
 
 If you want host file access instead of the default named volume:
@@ -134,8 +142,8 @@ Common changes:
 - `SHM_SIZE=2gb` for heavier GUI sessions on Mac
 - `ANIMA_HARDWARE_PROFILE=usb|serial|camera|audio|all`
 
-On macOS, helper commands will automatically use `.env.mac` unless you create your own `.env`.
-Profile-specific commands automatically switch to `.env.dev` and `.env.sim`.
+On macOS, helper commands will automatically use `.env.mac` or `.env.intel` unless you create your own `.env`.
+On non-mac hosts, profile-specific helpers can use `.env.dev` and `.env.sim`.
 Hardware passthrough is Linux-first and should remain opt-in.
 
 ## What To Expect On Mac

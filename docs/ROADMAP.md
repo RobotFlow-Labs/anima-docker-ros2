@@ -14,6 +14,7 @@
 - add a Mac-first quickstart and onboarding path
 - add a simple host readiness check for Docker Desktop on Mac
 - add generated local credentials
+- add ANIMA starter module bundles
 - add named-volume and bind-mounted workspace modes
 - add DDS presets and Foxglove bridge options
 - add opt-in hardware-aware runtime overlays for USB, serial, camera, and audio
@@ -32,6 +33,5 @@
 
 ## Next Product Pass
 
-- ANIMA-specific module bundles
 - education and onboarding profiles
 - reproducible demo stacks for public robotics use

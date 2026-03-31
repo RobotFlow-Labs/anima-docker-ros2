@@ -44,6 +44,7 @@ make up-sim
 make doctor
 make shell
 make demo
+make modules
 make env
 make password
 make foxglove
@@ -66,6 +67,13 @@ If you want a starter ROS 2 package inside the ANIMA workspace:
 
 ```bash
 ./anima demo
+```
+
+If you want the bundled starter module set instead:
+
+```bash
+./anima module list
+./anima module install starter
 ```
 
 If you want to work directly against a host folder instead of the default named volume:
@@ -138,5 +146,4 @@ If you do nothing, helper commands on macOS will fall back to:
 
 - `.env.mac` on Apple Silicon
 - `.env.intel` on Intel Macs
-- `.env.dev` for dev profile helpers
-- `.env.sim` for sim profile helpers
+- the host-specific Mac env file, with the requested profile applied at runtime

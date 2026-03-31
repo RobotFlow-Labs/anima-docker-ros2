@@ -14,6 +14,8 @@ The repo exposes the same workflow through three surfaces:
 ./anima password
 ./anima shell
 ./anima demo
+./anima module list
+./anima module install starter
 ./anima foxglove dev
 ./anima stop
 ```
@@ -91,6 +93,26 @@ cd /workspaces/anima
 colcon build
 source install/setup.bash
 ros2 run robotflowlabs_anima_demo hello_anima
+```
+
+## Module Bundles
+
+List the bundled workspace modules:
+
+```bash
+./anima module list
+```
+
+Inspect a module bundle:
+
+```bash
+./anima module show starter
+```
+
+Install a full starter bundle into `/workspaces/anima/src`:
+
+```bash
+./anima module install starter
 ```
 
 ## Workspace Modes

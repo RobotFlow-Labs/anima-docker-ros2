@@ -9,6 +9,7 @@ The goal is simple:
 - parallel multi-target builds with `docker buildx bake`
 - a single `./anima` CLI for the common local workflow
 - a starter ROS 2 demo package that users can build immediately
+- bundled ANIMA workspace modules that can be installed on demand
 - generated local desktop credentials instead of a hardcoded default password
 - DDS selection and Foxglove bridge support for richer ROS 2 workflows
 - opt-in hardware overlays for USB, serial, camera, and audio passthrough
@@ -79,6 +80,8 @@ Useful follow-ups:
 ./anima env
 ./anima password
 ./anima demo
+./anima module list
+./anima module install starter
 ./anima shell
 ./anima foxglove dev
 ./anima up --hardware usb
@@ -95,8 +98,7 @@ The helper layer auto-selects:
 
 - `.env.mac` on Apple Silicon Macs
 - `.env.intel` on Intel Macs
-- `.env.dev` for the dev profile
-- `.env.sim` for the sim profile
+- `.env.dev` and `.env.sim` for generic non-mac profile helpers
 - `.env` if you create a custom override
 - `ANIMA_HARDWARE_PROFILE` to opt into USB, serial, camera, or audio overlays
 
@@ -195,6 +197,7 @@ The original `Tiryoh/docker-ros2-desktop-vnc` clone is kept locally under `repos
 The current scaffold already includes:
 
 - generated local desktop credentials
+- bundled demo and pub/sub starter modules
 - named-volume and bind-mounted workspace modes
 - Fast DDS and CycloneDDS runtime selection
 - Foxglove bridge support on the dev and sim profiles

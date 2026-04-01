@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ANIMA ROS 2 // HERO</title>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&family=Chakra+Petch:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --rf-accent: #FF3B00;
+      --rf-accent-glow: rgba(255, 59, 0, 0.3);
+      --rf-accent-dim: rgba(255, 59, 0, 0.15);
+      --rf-bg: #050505;
+      --rf-bg-panel: #1A1A1A;
+      --rf-border: #333333;
+      --rf-text: #ffffff;
+      --rf-text-dim: #999999;
+      --rf-text-muted: #666666;
+      --rf-success: #00FF88;
+      --rf-warning: #FFB800;
+      --rf-restricted: #9B5EFF;
+      --rf-font-display: 'Oswald', sans-serif;
+      --rf-font-mono: 'JetBrains Mono', monospace;
+      --rf-font-tech: 'Chakra Petch', sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--rf-font-mono);
+      background: var(--rf-bg);
+      color: var(--rf-text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+      );
+    }
+
+    .hero-wrap {
+      position: relative;
+      width: 1280px;
+      height: 640px;
+      background:
+        linear-gradient(rgba(255, 59, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 59, 0, 0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      border: 1px solid var(--rf-border);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-wrap::before,
+    .hero-wrap::after {
+      content: "";
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: var(--rf-accent);
+      border-style: solid;
+    }
+
+    .hero-wrap::before {
+      top: 12px;
+      left: 12px;
+      border-width: 2px 0 0 2px;
+    }
+
+    .hero-wrap::after {
+      right: 12px;
+      bottom: 12px;
+      border-width: 0 2px 2px 0;
+    }
+
+    .corner-tr,
+    .corner-bl {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-color: var(--rf-accent);
+      border-style: solid;
+    }
+
+    .corner-tr {
+      top: 12px;
+      right: 12px;
+      border-width: 2px 2px 0 0;
+    }
+
+    .corner-bl {
+      bottom: 12px;
+      left: 12px;
+      border-width: 0 0 2px 2px;
+    }
+
+    .glow-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--rf-accent), transparent);
+      animation: scan 3s ease-in-out infinite;
+    }
+
+    @keyframes scan {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+
+    .pillar-tag {
+      position: absolute;
+      top: 16px;
+      left: 60px;
+      font-size: 10px;
+      color: var(--rf-accent);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .credits {
+      position: absolute;
+      top: 16px;
+      right: 60px;
+      font-size: 10px;
+      color: var(--rf-text-dim);
+      letter-spacing: 1px;
+      text-align: right;
+      line-height: 1.8;
+      text-transform: uppercase;
+    }
+
+    .credits a {
+      color: var(--rf-accent);
+      text-decoration: none;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--rf-accent);
+      text-transform: uppercase;
+      margin-bottom: 12px;
+      padding: 4px 16px;
+      border: 1px solid var(--rf-accent);
+      background: rgba(255, 59, 0, 0.08);
+    }
+
+    .module-code {
+      font-size: 13px;
+      color: var(--rf-text-dim);
+      letter-spacing: 4px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    .hero-title {
+      font-family: var(--rf-font-display);
+      font-size: 68px;
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    .hero-title .accent {
+      color: var(--rf-accent);
+    }
+
+    .hero-subtitle {
+      font-family: var(--rf-font-tech);
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--rf-text-dim);
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+
+    .hero-desc {
+      max-width: 860px;
+      text-align: center;
+      font-size: 14px;
+      color: var(--rf-text-dim);
+      line-height: 1.8;
+      margin-bottom: 28px;
+      text-transform: uppercase;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 32px;
+      margin-bottom: 28px;
+    }
+
+    .stat {
+      min-width: 220px;
+      text-align: center;
+      padding: 12px 24px;
+      border: 1px solid var(--rf-border);
+      background: var(--rf-bg-panel);
+    }
+
+    .stat-value {
+      font-family: var(--rf-font-display);
+      font-size: 34px;
+      font-weight: 700;
+      color: var(--rf-accent);
+      text-transform: uppercase;
+    }
+
+    .stat-label {
+      margin-top: 4px;
+      font-size: 10px;
+      letter-spacing: 2px;
+      color: var(--rf-text-dim);
+      text-transform: uppercase;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tag {
+      font-size: 10px;
+      letter-spacing: 1px;
+      padding: 4px 12px;
+      border: 1px solid var(--rf-border);
+      color: var(--rf-text-dim);
+      text-transform: uppercase;
+    }
+
+    .tag.active {
+      border-color: var(--rf-success);
+      color: var(--rf-success);
+    }
+
+    .status-bar {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 36px;
+      background: var(--rf-bg-panel);
+      border-top: 1px solid var(--rf-border);
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 0 20px;
+      font-size: 11px;
+      color: var(--rf-text-dim);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .status-bar .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .dot.green {
+      background: var(--rf-success);
+      box-shadow: 0 0 8px var(--rf-success);
+    }
+
+    .dot.orange {
+      background: var(--rf-warning);
+      box-shadow: 0 0 8px var(--rf-warning);
+    }
+
+    .paper-ref {
+      margin-left: auto;
+      color: var(--rf-text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-wrap">
+    <div class="glow-line"></div>
+    <div class="corner-tr"></div>
+    <div class="corner-bl"></div>
+
+    <div class="pillar-tag">PILLAR 02 — ANIMA RUNTIME</div>
+
+    <div class="credits">
+      UPSTREAM: <a href="https://github.com/ros2/ros2">ROS 2</a><br>
+      PORT: <a href="https://robotflow-labs.github.io">ROBOTFLOW LABS</a>
+    </div>
+
+    <div class="hero-tag">MODULE ANM-ROS2</div>
+    <div class="module-code">ANIMA-DOCKER-ROS2</div>
+
+    <div class="hero-title">
+      <span class="accent">BROWSER-FIRST</span> ROS 2
+    </div>
+
+    <div class="hero-subtitle">ROBOTICS DEVELOPER OS — NATIVE TO APPLE SILICON</div>
+
+    <p class="hero-desc">
+      ONE COMMAND BOOTS A REPRODUCIBLE ROS 2 JAZZY DESKTOP IN THE BROWSER WITH NOVNC AS THE DEFAULT PUBLIC PATH.<br>
+      FOXGLOVE, GAZEBO, SELECTABLE DDS, AND BUNDLED STARTER WORKFLOWS TURN DAY-ONE ROBOTICS INTO VISIBLE OUTPUT.
+    </p>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-value">1 CMD</div>
+        <div class="stat-label">DAY-ONE BOOT</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">3</div>
+        <div class="stat-label">STARTER WORKFLOWS</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">7.2S</div>
+        <div class="stat-label">STARTUP TO READY</div>
+      </div>
+    </div>
+
+    <div class="tag-row">
+      <span class="tag active">ROS 2</span>
+      <span class="tag active">NOVNC</span>
+      <span class="tag">FOXGLOVE</span>
+      <span class="tag">GAZEBO</span>
+      <span class="tag">JAZZY</span>
+      <span class="tag active">APPLE SILICON</span>
+    </div>
+
+    <div class="status-bar">
+      <span><span class="dot green"></span>DESKTOP PATH: OPERATIONAL</span>
+      <span><span class="dot green"></span>STARTER PACKS: OPERATIONAL</span>
+      <span><span class="dot green"></span>FOXGLOVE BRIDGE: OPERATIONAL</span>
+      <span><span class="dot orange"></span>WEBRTC PATH: PREVIEW ONLY</span>
+      <span class="paper-ref">MACENSKI ET AL., SCIENCE ROBOTICS 2022</span>
+    </div>
+  </div>
+</body>
+</html>

@@ -4,6 +4,8 @@ RobotFlowLabs ANIMA ROS 2 gives you a browser-first ROS 2 desktop that reaches a
 
 noVNC is the default transport. WebRTC stays preview-only in this release surface.
 
+![ANIMA ROS 2 hero](assets/hero.png)
+
 ## First Success
 
 The default public path stays simple:

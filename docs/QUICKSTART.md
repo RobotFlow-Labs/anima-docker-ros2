@@ -33,12 +33,8 @@ Open:
 For the single flagship starter flow, install the visualization starter and launch it:
 
 ```bash
-./anima starter install starter-visualization
-./anima shell
-cd /workspaces/anima
-colcon build
-source install/setup.bash
-ros2 launch robotflowlabs_anima_starter starter_demo.launch.py
+./anima starter run starter-visualization
+./anima foxglove dev
 ```
 
 If you want the published image instead of a local checkout, run:
@@ -101,7 +97,7 @@ If you want the bundled starter packs instead:
 
 ```bash
 ./anima starter list
-./anima starter install starter-visualization
+./anima starter run starter-visualization
 ```
 
 If you want host file access instead of the default named volume:

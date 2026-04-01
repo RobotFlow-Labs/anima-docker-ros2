@@ -29,13 +29,54 @@ if [[ "${ANIMA_PROFILE}" == "desktop" ]]; then
   exit 1
 fi
 
-if [[ -z "$("${ROOT_DIR}/scripts/compose.sh" ps -q desktop)" ]]; then
-  "${ROOT_DIR}/scripts/start.sh" "${ANIMA_PROFILE}" --no-open
-fi
+running_container_id() {
+  "${ROOT_DIR}/scripts/compose.sh" ps -q desktop
+}
+
+container_env() {
+  local container_id="$1"
+  local key="$2"
+  docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "${container_id}" \
+    | awk -F= -v k="${key}" '$1 == k {sub($1 "=",""); print; exit}'
+}
+
+ensure_matching_runtime() {
+  local container_id running_profile running_dds running_hardware
+  container_id="$(running_container_id)"
+
+  if [[ -z "${container_id}" ]]; then
+    "${ROOT_DIR}/scripts/start.sh" "${ANIMA_PROFILE}" --no-open
+    return
+  fi
+
+  running_profile="$(container_env "${container_id}" ANIMA_PROFILE_NAME)"
+  running_dds="$(container_env "${container_id}" ANIMA_DDS_IMPLEMENTATION)"
+  running_hardware="$(container_env "${container_id}" ANIMA_HARDWARE_PROFILE)"
+
+  if [[ "${running_profile}" != "${ANIMA_PROFILE}" ]] \
+    || [[ "${running_dds}" != "${ANIMA_DDS_IMPLEMENTATION}" ]] \
+    || [[ "${running_hardware}" != "${ANIMA_HARDWARE_PROFILE}" ]]; then
+    echo "[info] restarting ANIMA to match foxglove runtime"
+    echo "[info] requested profile: ${ANIMA_PROFILE}"
+    echo "[info] requested dds: ${ANIMA_DDS_IMPLEMENTATION}"
+    echo "[info] requested hardware: ${ANIMA_HARDWARE_PROFILE}"
+    "${ROOT_DIR}/scripts/compose.sh" down
+    "${ROOT_DIR}/scripts/start.sh" "${ANIMA_PROFILE}" --no-open
+  fi
+}
+
+ensure_matching_runtime
 
 "${ROOT_DIR}/scripts/compose.sh" exec -T desktop bash -lc '
   set -eo pipefail
-  pkill -f foxglove_bridge >/dev/null 2>&1 || true
+  existing_pids="$(pgrep -f "foxglove_bridge_launch.xml" || true)"
+  if [[ -n "${existing_pids}" ]]; then
+    for pid in ${existing_pids}; do
+      if [[ "${pid}" != "$$" ]]; then
+        kill "${pid}" >/dev/null 2>&1 || true
+      fi
+    done
+  fi
   source "/opt/ros/${ROS_DISTRO}/setup.bash"
   if [[ -f "${ANIMA_WS}/install/setup.bash" ]]; then
     source "${ANIMA_WS}/install/setup.bash"

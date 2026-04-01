@@ -15,7 +15,7 @@ The repo exposes the same workflow through three surfaces:
 ./anima shell
 ./anima demo
 ./anima starter list
-./anima starter install starter-visualization
+./anima starter run starter-visualization
 ./anima foxglove dev
 ./anima stop
 ```
@@ -115,6 +115,12 @@ Install the flagship starter bundle into `/workspaces/anima/src`:
 ./anima starter install starter-visualization
 ```
 
+Install the flagship starter bundle, start its recommended profile, and run it:
+
+```bash
+./anima starter run starter-visualization
+```
+
 Run the pack smoke test without touching the active workspace:
 
 ```bash
@@ -128,6 +134,7 @@ Remove the installed pack from the workspace:
 ```
 
 `./anima module ...` remains a legacy alias for the same starter workflow.
+`starter-visualization` is the default first-run starter and recommends the `dev` profile.
 
 ## Workspace Modes
 

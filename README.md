@@ -76,12 +76,8 @@ That is the default adoption path:
 If you want the single flagship starter flow, use the visualization starter:
 
 ```bash
-./anima starter install starter-visualization
-./anima shell
-cd /workspaces/anima
-colcon build
-source install/setup.bash
-ros2 launch robotflowlabs_anima_starter starter_demo.launch.py
+./anima starter run starter-visualization
+./anima foxglove dev
 ```
 
 If you want the published image instead of a local checkout, pull and run the GHCR desktop image directly:
@@ -112,8 +108,7 @@ Useful follow-ups:
 ./anima password
 ./anima demo
 ./anima starter list
-./anima starter install starter-visualization
-./anima shell
+./anima starter run starter-visualization
 ./anima foxglove dev
 ./anima up --hardware usb
 ./anima up --transport webrtc

@@ -22,8 +22,8 @@ Usage:
   ./anima password [show|reset]
   ./anima foxglove [dev|sim] [--bind PATH] [--dds fastrtps|cyclonedds] [--no-open]
   ./anima demo [--force]
-  ./anima starter [list|show|install|remove|test] [MODULE_ID] [--force]
-  ./anima module [list|show|install|remove|test] [MODULE_ID] [--force]  (alias)
+  ./anima starter [list|show|install|remove|run|test] [MODULE_ID] [--force]
+  ./anima module [list|show|install|remove|run|test] [MODULE_ID] [--force]  (alias)
   ./anima import <path>
   ./anima export <path>
   ./anima bake

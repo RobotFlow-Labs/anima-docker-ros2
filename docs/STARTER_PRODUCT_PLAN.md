@@ -111,6 +111,7 @@ Deliverables:
   - `./anima starter show <id>`
   - `./anima starter install <id>`
   - `./anima starter remove <id>`
+  - `./anima starter run <id>`
   - `./anima starter test <id>`
 - compatibility validation and better errors
 
@@ -212,8 +213,7 @@ The most promising first market message is:
 
 The most promising default starter experience is:
 
-- `./anima up`
-- `./anima starter install starter-visualization`
+- `./anima starter run starter-visualization`
 - `./anima foxglove dev`
 
 That path is the flagship demo and should remain the default public starter entrypoint.

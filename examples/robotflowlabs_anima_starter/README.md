@@ -11,6 +11,12 @@ It gives you one launch command that proves three things at once:
 Build and run it inside ANIMA:
 
 ```bash
+./anima starter run starter-visualization
+```
+
+If you want the manual in-container path instead:
+
+```bash
 cd /workspaces/anima
 colcon build
 source install/setup.bash

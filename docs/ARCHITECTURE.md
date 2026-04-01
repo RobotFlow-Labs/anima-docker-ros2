@@ -70,15 +70,15 @@ Why:
 - parallel target builds
 - easier extension for NVIDIA, hardware, and future ANIMA modules
 
-## Local Reference Policy
+## Standalone Product Policy
 
-Third-party repos live under `repositories/` and are gitignored.
+This repository should read and behave like a complete standalone product.
 
-That gives us:
+That means:
 
-- a clean public repo history
-- local access to upstream implementations during design and migration
-- a safe place for multiple upstream references later
+- product docs must stand on their own
+- release assets must explain the supported install paths directly
+- runtime behavior should not depend on local scratch clones or unmanaged side repositories
 
 ## Runtime Layer
 
@@ -121,4 +121,4 @@ The next phase should add:
 
 - coverage for hardware-aware profiles and a resilient WebRTC path
 - a full headless `ros_gz` boot test rather than just launch-file validation
-- release benchmarks and a publish-time support contract that matches the supported tags
+- release measurements and a publish-time support contract that match the supported tags

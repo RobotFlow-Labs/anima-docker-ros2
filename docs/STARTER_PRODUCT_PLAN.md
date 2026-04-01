@@ -15,13 +15,7 @@ This is a starter product, not the full ANIMA platform.
 
 ## Product Position
 
-The cloned benchmark in `repositories/docker-ros2-desktop-vnc` is a strong reference for:
-
-- simplicity
-- public trust
-- obvious first-run behavior
-
-This repo should beat it by combining:
+This repo should win by combining:
 
 - easier onboarding on Apple Silicon
 - layered targets instead of a monolithic image
@@ -43,14 +37,14 @@ If a feature only matters once the user is already inside the wider ANIMA platfo
 
 ## Current Gaps
 
-The repo is technically ahead of the cloned benchmark, but not yet market-ready because:
+The repo is not yet market-ready because:
 
 - starter modules are smoke-test assets, not outcome-driven starter packs
 - onboarding is repo-centric instead of install-and-win-centric
 - module bundles are local/internal, not productized
 - README and quickstarts describe capabilities but not a sharp market offer
-- public trust signals are weaker than the benchmark
-- comparison, migration, and launch assets are missing
+- public trust signals are still incomplete
+- launch assets are missing
 
 ## Product Strategy
 
@@ -59,7 +53,7 @@ Ship this product in four tracks:
 1. Onboarding and positioning
 2. Module system productization
 3. Outcome-driven starter packs
-4. Distribution, trust, and market comparison
+4. Distribution, trust, and market readiness
 
 ## Release Principle
 
@@ -85,13 +79,12 @@ Deliverables:
   - image-first path from GHCR
 - revised quickstart optimized for first success
 - first-10-minutes walkthrough with screenshots and expected outputs
-- migration/comparison page against `docker-ros2-desktop-vnc`
 
 Acceptance criteria:
 
 - the top of the README explains what this product is in under 3 lines
 - the first successful path does not require reading architecture docs
-- the benchmark comparison is explicit and favorable on differentiated features
+- the differentiated value is obvious from the onboarding surface itself
 
 ## Workstream B: Module System Productization
 
@@ -171,7 +164,7 @@ Deliverables:
   - Apple Silicon macOS
   - Intel macOS
   - Linux desktop
-- startup time and image-size benchmarks
+- startup time and image-size measurements
 - public release notes template
 - README trust assets:
   - screenshots
@@ -184,14 +177,13 @@ Acceptance criteria:
 
 - the user can identify which image/tag to use without reading the whole repo
 - screenshots and comparison assets exist in-tree
-- there is a clear answer to “why use this instead of the cloned benchmark?”
+- there is a clear answer to what problem this starter product solves
 
 ## Execution Order
 
 ### Phase 1: Position the product
 
 - rewrite README hero and quickstart around one default starter workflow
-- add comparison and migration docs
 - keep scope explicitly “starter product”
 
 ### Phase 2: Productize starter bundles
@@ -208,9 +200,9 @@ Acceptance criteria:
 
 ### Phase 4: Ship the public launch surface
 
-- screenshots, benchmarks, support matrix
+- screenshots, measurements, support matrix
 - release notes and install docs
-- comparison assets and distribution polish
+- distribution polish
 
 ## Candidate Default Offer
 
@@ -232,7 +224,6 @@ Agent 1 owns:
 
 - README hero
 - quickstart restructuring
-- comparison and migration docs
 
 Agent 2 owns:
 
@@ -260,5 +251,4 @@ This repo is market-ready as a starter product when:
 - starter packs are productized, not just copied into the workspace
 - at least one starter pack delivers a meaningful robotics workflow
 - CI validates the flagship starter flow
-- the benchmark comparison is explicit and favorable
 - the repo can be recommended publicly without explaining ANIMA first

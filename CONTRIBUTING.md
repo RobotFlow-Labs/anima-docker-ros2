@@ -5,12 +5,7 @@ RobotFlowLabs ANIMA is an open public project. The goal is to keep the repo easy
 ## Local Policy
 
 The tracked root is the RobotFlowLabs ANIMA repo.
-
-Third-party reference repos belong under `repositories/` and stay gitignored.
-
-Current local reference:
-
-- `repositories/docker-ros2-desktop-vnc`
+Treat it as a standalone product repo. Keep product code, docs, and release assets self-contained and avoid depending on external local clones or scratch repos.
 
 ## Local Build
 

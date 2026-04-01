@@ -12,8 +12,10 @@ It is not a direct fork of a VNC desktop image. The product surface is:
 - optional Foxglove bridge access for web-native ROS inspection
 - clean layering for developer and simulation needs
 - a separate NVIDIA-only simulation path for Linux hosts
+- a clear public default around `jazzy-desktop` for the easiest first-run experience
 - public OSS docs and CI that validate real usage paths
 - bundled starter modules that can be copied into the workspace on demand
+- public support, install, and release guidance that makes the default offer obvious
 
 ## Layering
 
@@ -113,8 +115,10 @@ The current CI verifies:
 - `rviz2` can start inside the desktop X session without interactive input
 - the sim image can resolve and parse a `ros_gz` launch entrypoint
 - the branded `./anima up` path can boot and serve the default noVNC desktop
+- release assets should include the support matrix and release guide so tagged builds are self-describing
 
 The next phase should add:
 
 - coverage for hardware-aware profiles and a resilient WebRTC path
 - a full headless `ros_gz` boot test rather than just launch-file validation
+- release benchmarks and a publish-time support contract that matches the supported tags

@@ -35,3 +35,6 @@
 
 - education and onboarding profiles
 - reproducible demo stacks for public robotics use
+- a clear starter-visualization pack that can become the default marketing demo
+- support matrix and GHCR install/release guidance that match the published images
+- benchmark and comparison assets that explain why this repo is better than the cloned reference

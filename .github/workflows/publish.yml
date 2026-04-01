@@ -82,4 +82,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: VERSION
+          files: |
+            VERSION
+            docs/SUPPORT_MATRIX.md
+            docs/RELEASE_GUIDE.md

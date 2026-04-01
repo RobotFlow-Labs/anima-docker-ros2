@@ -9,4 +9,4 @@ if [[ "${1:-}" == "--force" ]]; then
   args+=(--force)
 fi
 
-exec "${ROOT_DIR}/scripts/modules.sh" "${args[@]}"
+exec bash "${ROOT_DIR}/scripts/modules.sh" "${args[@]}"

@@ -43,7 +43,7 @@ env \
   HOST_VNC_PORT="${HOST_VNC_PORT_OVERRIDE}" \
   HOST_WEBRTC_PORT="${HOST_WEBRTC_PORT_OVERRIDE}" \
   HOST_FOXGLOVE_PORT="${HOST_FOXGLOVE_PORT_OVERRIDE}" \
-  "${ROOT_DIR}/scripts/modules.sh" install starter --force
+  bash "${ROOT_DIR}/scripts/modules.sh" install starter --force
 
 env \
   ANIMA_ENV_FILE="${ROOT_DIR}/.env.example" \
@@ -59,22 +59,17 @@ env \
     source install/setup.bash
 
     set +e
-    timeout 5 ros2 run robotflowlabs_anima_demo hello_anima >/tmp/anima-demo.log 2>&1
-    demo_status=$?
-    timeout 8 ros2 launch robotflowlabs_anima_pubsub pubsub_demo.launch.py >/tmp/anima-pubsub.log 2>&1
-    pubsub_status=$?
+    timeout 10 ros2 launch robotflowlabs_anima_starter starter_demo.launch.py >/tmp/anima-starter.log 2>&1
+    starter_status=$?
     set -e
 
-    if [[ "${demo_status}" != "0" && "${demo_status}" != "124" ]]; then
-      cat /tmp/anima-demo.log >&2
-      exit "${demo_status}"
+    if [[ "${starter_status}" != "0" && "${starter_status}" != "124" ]]; then
+      cat /tmp/anima-starter.log >&2
+      exit "${starter_status}"
     fi
 
-    if [[ "${pubsub_status}" != "0" && "${pubsub_status}" != "124" ]]; then
-      cat /tmp/anima-pubsub.log >&2
-      exit "${pubsub_status}"
-    fi
-
-    grep -q "RobotFlowLabs ANIMA demo node started" /tmp/anima-demo.log
-    grep -Eq "Publishing ANIMA starter message|heard ANIMA starter message" /tmp/anima-pubsub.log
+    grep -q "RobotFlowLabs ANIMA demo node started" /tmp/anima-starter.log
+    grep -q "Your workspace is ready. Add packages under /workspaces/anima/src." /tmp/anima-starter.log
+    grep -q "ANIMA starter talker is publishing on /anima/starter" /tmp/anima-starter.log
+    grep -Eq "Publishing ANIMA starter message|heard ANIMA starter message" /tmp/anima-starter.log
   '

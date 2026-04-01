@@ -39,9 +39,9 @@ If a feature only matters once the user is already inside the wider ANIMA platfo
 
 The repo is not yet market-ready because:
 
-- starter modules are smoke-test assets, not outcome-driven starter packs
+- starter packs are still too close to smoke-test assets instead of outcome-driven workflows
 - onboarding is repo-centric instead of install-and-win-centric
-- module bundles are local/internal, not productized
+- starter packs are still local/internal, not fully productized
 - README and quickstarts describe capabilities but not a sharp market offer
 - public trust signals are still incomplete
 - launch assets are missing
@@ -213,10 +213,10 @@ The most promising first market message is:
 The most promising default starter experience is:
 
 - `./anima up`
-- `./anima starter install visualization`
+- `./anima starter install starter-visualization`
 - `./anima foxglove dev`
 
-That path should become the flagship demo once the visualization starter pack is ready.
+That path is the flagship demo and should remain the default public starter entrypoint.
 
 ## Subagent Ownership
 

@@ -2,7 +2,7 @@
 <package format="3">
   <name>robotflowlabs_anima_starter</name>
   <version>0.1.0</version>
-  <description>Flagship ANIMA starter showcase that launches workspace readiness and live pub/sub together.</description>
+  <description>Default ANIMA visualization starter that launches workspace readiness and live pub/sub together.</description>
   <maintainer email="opensource@robotflowlabs.com">RobotFlowLabs</maintainer>
   <license>Apache-2.0</license>
 

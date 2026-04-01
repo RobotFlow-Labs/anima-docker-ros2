@@ -13,7 +13,7 @@
 - add a Mac-first quickstart and onboarding path
 - add a simple host readiness check for Docker Desktop on Mac
 - add generated local credentials
-- add ANIMA starter module bundles
+- add ANIMA starter packs
 - add named-volume and bind-mounted workspace modes
 - add DDS presets and Foxglove bridge options
 - add opt-in hardware-aware runtime overlays for USB, serial, camera, and audio
@@ -34,6 +34,6 @@
 
 - education and onboarding profiles
 - reproducible demo stacks for public robotics use
-- a clear starter-visualization pack that can become the default marketing demo
+- strengthen `starter-visualization` as the default marketing demo
 - support matrix and GHCR install/release guidance that match the published images
 - launch assets that make the starter product value obvious without extra explanation

@@ -14,7 +14,7 @@ It is not a direct fork of a VNC desktop image. The product surface is:
 - a separate NVIDIA-only simulation path for Linux hosts
 - a clear public default around `jazzy-desktop` for the easiest first-run experience
 - public OSS docs and CI that validate real usage paths
-- bundled starter modules that can be copied into the workspace on demand
+- bundled starter packs that can be copied into the workspace on demand
 - public support, install, and release guidance that makes the default offer obvious
 
 ## Layering
@@ -94,7 +94,7 @@ That layer is responsible for:
 - selecting opt-in hardware overlays for USB, serial, camera, and audio without rebuilding the image
 - exposing Foxglove on demand for the `dev` and `sim` profiles
 - exposing a GPU-enabled sim path for Linux/NVIDIA hosts without changing the Mac default
-- installing tracked ANIMA module bundles into the workspace without rebuilding images
+- installing tracked starter packs into the workspace without rebuilding images
 
 The design goal is to keep the images stable while making the runtime choices late-bound.
 Users should not need separate near-duplicate images just to switch DDS or workspace mount mode.
@@ -108,7 +108,7 @@ The current CI verifies:
 - the base image can start and source ROS
 - the desktop image can start and expose the web UI
 - the demo workspace can build with colcon
-- the bundled starter module bundle can build and launch
+- the bundled `starter-visualization` pack can build and launch
 - CycloneDDS can be selected successfully
 - the Foxglove bridge can launch and expose a reachable websocket
 - two ROS 2 containers can exchange messages over CycloneDDS

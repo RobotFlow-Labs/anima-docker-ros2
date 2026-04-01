@@ -33,15 +33,15 @@ Open:
 - `http://127.0.0.1:6080`
 - optional WebRTC: `./anima up --transport webrtc`
 
-For the first meaningful ROS 2 result, install the starter bundle and launch the pub/sub demo:
+For the single flagship starter flow, install the visualization starter and launch it:
 
 ```bash
-./anima module install starter
+./anima starter install starter-visualization
 ./anima shell
 cd /workspaces/anima
 colcon build
 source install/setup.bash
-ros2 launch robotflowlabs_anima_pubsub pubsub_demo.launch.py
+ros2 launch robotflowlabs_anima_starter starter_demo.launch.py
 ```
 
 If you want the published image instead of a local checkout, run:
@@ -92,11 +92,11 @@ If you want a starter ROS 2 package inside the ANIMA workspace:
 ./anima demo
 ```
 
-If you want the bundled starter module set instead:
+If you want the bundled starter pack set instead:
 
 ```bash
-./anima module list
-./anima module install starter
+./anima starter list
+./anima starter install starter-visualization
 ```
 
 If you want to work directly against a host folder instead of the default named volume:

@@ -16,10 +16,10 @@ What you get:
 - layered CLI, desktop, dev, and simulation images
 - a single `./anima` CLI and matching `make` targets
 - a starter ROS 2 demo package that users can build immediately
-- bundled ANIMA workspace modules that can be installed on demand
+- bundled starter packs that can be installed on demand
 - generated local desktop credentials instead of a hardcoded default password
 - DDS selection, Foxglove bridge support, and opt-in hardware overlays
-- a clean product repo with local reference materials kept outside the tracked source tree
+- a self-contained product repo with published images, starter packs, and release guidance
 
 If you are on a Mac, start with [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md).
 For device passthrough details, see [docs/HARDWARE.md](docs/HARDWARE.md).
@@ -73,15 +73,15 @@ That is the default adoption path:
 - no manual port wiring
 - no extra flags
 
-If you want the first meaningful ROS 2 result, use the starter bundle:
+If you want the single flagship starter flow, use the visualization starter:
 
 ```bash
-./anima module install starter
+./anima starter install starter-visualization
 ./anima shell
 cd /workspaces/anima
 colcon build
 source install/setup.bash
-ros2 launch robotflowlabs_anima_pubsub pubsub_demo.launch.py
+ros2 launch robotflowlabs_anima_starter starter_demo.launch.py
 ```
 
 If you want the published image instead of a local checkout, pull and run the GHCR desktop image directly:
@@ -111,8 +111,8 @@ Useful follow-ups:
 ./anima env
 ./anima password
 ./anima demo
-./anima module list
-./anima module install starter
+./anima starter list
+./anima starter install starter-visualization
 ./anima shell
 ./anima foxglove dev
 ./anima up --hardware usb
@@ -215,10 +215,11 @@ Release and image versioning are now driven from [`VERSION`](VERSION). Tagged re
 │   ├── modules.sh
 │   ├── smoke_cli_up.sh
 │   ├── smoke_modules.sh
-│   └── sync_reference.sh
+│   └── demo_workspace.sh
 ├── examples/
 │   ├── robotflowlabs_anima_demo/
-│   └── robotflowlabs_anima_pubsub/
+│   ├── robotflowlabs_anima_pubsub/
+│   └── robotflowlabs_anima_starter/
 ├── compose.yaml
 └── docker-bake.hcl
 ```
@@ -230,7 +231,7 @@ This repository root is the RobotFlowLabs ANIMA product repo.
 The current scaffold already includes:
 
 - generated local desktop credentials
-- bundled demo and pub/sub starter modules
+- bundled workspace, graph, and visualization starter packs
 - named-volume and bind-mounted workspace modes
 - Fast DDS and CycloneDDS runtime selection
 - Foxglove bridge support on the dev and sim profiles

@@ -15,7 +15,7 @@ The repo exposes the same workflow through three surfaces:
 ./anima shell
 ./anima demo
 ./anima starter list
-./anima starter install starter
+./anima starter install starter-visualization
 ./anima foxglove dev
 ./anima stop
 ```
@@ -95,7 +95,7 @@ source install/setup.bash
 ros2 run robotflowlabs_anima_demo hello_anima
 ```
 
-## Module Bundles
+## Starter Packs
 
 List the bundled starter packs:
 
@@ -106,25 +106,25 @@ List the bundled starter packs:
 Inspect a starter pack:
 
 ```bash
-./anima starter show starter
+./anima starter show starter-visualization
 ```
 
 Install the flagship starter bundle into `/workspaces/anima/src`:
 
 ```bash
-./anima starter install starter
+./anima starter install starter-visualization
 ```
 
 Run the pack smoke test without touching the active workspace:
 
 ```bash
-./anima starter test starter
+./anima starter test starter-visualization
 ```
 
 Remove the installed pack from the workspace:
 
 ```bash
-./anima starter remove starter
+./anima starter remove starter-visualization
 ```
 
 `./anima module ...` remains a legacy alias for the same starter workflow.

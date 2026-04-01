@@ -6,6 +6,17 @@ cd "${ROOT_DIR}"
 
 MODULE_DIR="${ROOT_DIR}/modules"
 
+normalize_module_id() {
+  case "${1:-}" in
+    starter)
+      printf 'starter-visualization\n'
+      ;;
+    *)
+      printf '%s\n' "${1:-}"
+      ;;
+  esac
+}
+
 usage() {
   cat <<'EOF'
 usage: ./anima starter [list|show|install|remove|test] [MODULE_ID] [--force]
@@ -53,7 +64,8 @@ split_list() {
 }
 
 manifest_path() {
-  local module_id="$1"
+  local module_id
+  module_id="$(normalize_module_id "$1")"
   local manifest="${MODULE_DIR}/${module_id}.env"
   if [[ ! -f "${manifest}" ]]; then
     echo "unknown starter pack: ${module_id}" >&2
@@ -179,7 +191,7 @@ list_modules() {
   shopt -s nullglob
   for manifest in "${MODULE_DIR}"/*.env; do
     load_manifest "${manifest}"
-    printf '[info] %-12s %-8s %s\n' "${MODULE_ID}" "${MODULE_VERSION}" "${MODULE_TITLE}"
+    printf '[info] %-22s %-8s %s\n' "${MODULE_ID}" "${MODULE_VERSION}" "${MODULE_TITLE}"
     printf '       %s\n' "${MODULE_SUMMARY}"
     printf '       distros: %s\n' "$(render_list "${MODULE_SUPPORTED_DISTROS}")"
     printf '       profiles: %s\n' "$(render_list "${MODULE_SUPPORTED_PROFILES}")"

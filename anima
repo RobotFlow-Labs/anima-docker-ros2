@@ -28,7 +28,6 @@ Usage:
   ./anima export <path>
   ./anima bake
   ./anima compose <docker compose args...>
-  ./anima sync-reference
   ./anima install-cli
   ./anima help
 
@@ -130,9 +129,6 @@ case "${command_name}" in
     ;;
   compose)
     exec "${ROOT_DIR}/scripts/compose.sh" "$@"
-    ;;
-  sync-reference)
-    exec "${ROOT_DIR}/scripts/sync_reference.sh"
     ;;
   install-cli)
     exec "${ROOT_DIR}/scripts/install.sh"

@@ -55,7 +55,7 @@ Tagged releases should make it obvious:
 - which host OS and architecture are supported
 - which transport is default
 - which features are experimental
-- how to install a starter pack
+- how to install `starter-visualization`
 
 This repository now attaches the release guide and support matrix to the GitHub Release so the public release carries its own install and support contract.
 

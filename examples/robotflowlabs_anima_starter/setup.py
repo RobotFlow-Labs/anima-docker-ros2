@@ -18,7 +18,7 @@ setup(
     zip_safe=True,
     maintainer="RobotFlowLabs",
     maintainer_email="opensource@robotflowlabs.com",
-    description="Flagship ANIMA starter showcase package.",
+    description="Default ANIMA visualization starter package.",
     license="Apache-2.0",
     tests_require=["pytest"],
     entry_points={

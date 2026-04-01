@@ -1,12 +1,12 @@
-# RobotFlowLabs ANIMA Starter Showcase
+# RobotFlowLabs ANIMA Visualization Starter
 
-This is the flagship first-run starter pack for ANIMA.
+This is the default first-run visualization starter for ANIMA.
 
 It gives you one launch command that proves three things at once:
 
 - the workspace is healthy
 - ROS 2 nodes can publish and subscribe
-- the starter desktop is useful before any custom code is written
+- the desktop is already useful before any custom code is written
 
 Build and run it inside ANIMA:
 

@@ -43,7 +43,7 @@ env \
   HOST_VNC_PORT="${HOST_VNC_PORT_OVERRIDE}" \
   HOST_WEBRTC_PORT="${HOST_WEBRTC_PORT_OVERRIDE}" \
   HOST_FOXGLOVE_PORT="${HOST_FOXGLOVE_PORT_OVERRIDE}" \
-  bash "${ROOT_DIR}/scripts/modules.sh" install starter --force
+  bash "${ROOT_DIR}/scripts/modules.sh" install starter-visualization --force
 
 env \
   ANIMA_ENV_FILE="${ROOT_DIR}/.env.example" \

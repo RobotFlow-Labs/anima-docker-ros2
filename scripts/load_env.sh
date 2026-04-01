@@ -22,7 +22,7 @@ fi
 
 generate_password() {
   if command -v openssl >/dev/null 2>&1; then
-    openssl rand -base64 18 | tr -dc 'A-Za-z0-9' | head -c 20
+    openssl rand -base64 12 | tr -dc 'A-Za-z0-9' | head -c 8
     return
   fi
 
@@ -31,8 +31,13 @@ import secrets
 import string
 
 alphabet = string.ascii_letters + string.digits
-print("".join(secrets.choice(alphabet) for _ in range(20)))
+print("".join(secrets.choice(alphabet) for _ in range(8)))
 PY
+}
+
+normalize_password() {
+  local raw="${1:-}"
+  printf '%s' "${raw}" | tr -d '\r\n' | cut -c1-8
 }
 
 preserve_runtime_env() {
@@ -110,9 +115,13 @@ if [[ -z "${VNC_PASSWORD:-}" || "${VNC_PASSWORD}" == "anima" ]]; then
     chmod 600 "${PASSWORD_FILE}"
   fi
   export VNC_PASSWORD
-  VNC_PASSWORD="$(tr -d '\r\n' < "${PASSWORD_FILE}")"
+  VNC_PASSWORD="$(normalize_password "$(cat "${PASSWORD_FILE}")")"
+  printf '%s\n' "${VNC_PASSWORD}" > "${PASSWORD_FILE}"
+  chmod 600 "${PASSWORD_FILE}"
   export ANIMA_VNC_PASSWORD_MODE="generated"
 else
+  export VNC_PASSWORD
+  VNC_PASSWORD="$(normalize_password "${VNC_PASSWORD}")"
   export ANIMA_VNC_PASSWORD_MODE="explicit"
 fi
 

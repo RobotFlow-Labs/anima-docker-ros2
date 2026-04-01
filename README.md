@@ -1,86 +1,70 @@
 # RobotFlowLabs ANIMA ROS 2
 
-RobotFlowLabs ANIMA ROS 2 is the fastest ROS 2 starter desktop for Mac and Linux: one command, browser access, and starter workflows that work on day one.
+RobotFlowLabs ANIMA ROS 2 gives you a browser-first ROS 2 desktop that reaches a visible result on day one: one command, one noVNC session, and starter workflows that already prove the stack is useful.
 
-It is the market-facing starter product adjacent to ANIMA, not the full ANIMA platform.
+noVNC is the default transport. WebRTC stays preview-only in this release surface.
 
-Best for:
+## First Success
 
-- ROS 2 developers who do not want a local ROS install
-- teams that need a browser-based desktop for onboarding and demos
-- robotics education, simulation, and starter workflows that need to be reproducible
-
-What you get:
-
-- a noVNC-first desktop with an optional WebRTC preview path
-- layered CLI, desktop, dev, and simulation images
-- a single `./anima` CLI and matching `make` targets
-- a starter ROS 2 demo package that users can build immediately
-- bundled starter packs that can be installed on demand
-- generated local desktop credentials instead of a hardcoded default password
-- DDS selection, Foxglove bridge support, and opt-in hardware overlays
-- a self-contained product repo with published images, starter packs, and release guidance
-
-If you are on a Mac, start with [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md).
-For device passthrough details, see [docs/HARDWARE.md](docs/HARDWARE.md).
-
-If you want to attach with VS Code, use `.devcontainer/` and reopen the repo in a container.
-See [docs/DEVCONTAINER.md](docs/DEVCONTAINER.md).
-
-## Community
-
-- Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
-- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
-- Security policy: [SECURITY.md](SECURITY.md)
-- Public security guidance: [docs/SECURITY.md](docs/SECURITY.md)
-- Command guide: [docs/COMMANDS.md](docs/COMMANDS.md)
-- Funding: [.github/FUNDING.yml](.github/FUNDING.yml)
-- Issue templates: `.github/ISSUE_TEMPLATE/`
-
-The public issue tracker is for bugs, feature requests, and docs improvements. Security-sensitive reports should follow the private reporting path in the security policy.
-
-## Image Layers
-
-The first scaffold defines four build targets:
-
-- `base`: ROS 2 CLI + colcon/vcstool/rosdep + sane shell defaults
-- `desktop`: lightweight remote desktop with noVNC by default, optional WebRTC experiments, and core ROS GUI tools
-- `dev`: desktop plus common development tools
-- `sim`: dev plus Gazebo / `ros_gz`
-- `sim-nvidia`: Linux/NVIDIA sim path with GPU runtime defaults
-
-Supported distro matrix for the initial public pass:
-
-- `humble`
-- `jazzy`
-- `rolling`
-
-## Quick Start
-
-If Docker Desktop is running, the fastest path is:
-
-```bash
-make up
-```
-
-That command uses the repo helper layer, auto-selects the right env file on macOS, starts the stack, waits for the web UI, and opens the browser.
-
-That is the default adoption path:
-
-- best experience on Apple Silicon Macs
-- no local ROS install
-- no local workspace setup
-- no manual port wiring
-- no extra flags
-
-If you want the single flagship starter flow, use the visualization starter:
+The default public path stays simple:
 
 ```bash
 ./anima starter run starter-visualization
 ./anima foxglove dev
 ```
 
-If you want the published image instead of a local checkout, pull and run the GHCR desktop image directly:
+What that path gives you:
+
+- a working noVNC desktop at `http://127.0.0.1:6080`
+- a built workspace under `/workspaces/anima`
+- live ROS 2 pub/sub traffic
+- a Foxglove companion path on `ws://127.0.0.1:8765`
+
+If you want the shortest desktop-only path first:
+
+```bash
+make up
+```
+
+## Visible Proof
+
+| Default Desktop | Visualization Starter | Simulation Starter |
+| --- | --- | --- |
+| ![ANIMA noVNC desktop](docs/assets/hero-desktop.png) | ![Foxglove visualization starter](docs/assets/starter-visualization-foxglove.png) | ![Gazebo starter in noVNC](docs/assets/starter-sim-gazebo.png) |
+
+| Sensor Starter | Three-Minute Path |
+| --- | --- |
+| ![Foxglove synthetic sensors starter](docs/assets/starter-sensors-foxglove.png) | ![Three-minute first success GIF](docs/assets/first-success.gif) |
+
+## Choose Your Starter
+
+| Starter | Command | Recommended Profile | Visible Outcome | Companion |
+| --- | --- | --- | --- | --- |
+| `starter-visualization` | `./anima starter run starter-visualization` | `dev` | workspace heartbeat plus live ROS 2 graph | `./anima foxglove dev` |
+| `starter-sim` | `./anima starter run starter-sim` | `sim` | Gazebo on the noVNC desktop with `/clock` bridged into ROS 2 | `./anima foxglove sim` |
+| `starter-sensors` | `./anima starter run starter-sensors` | `dev` | deterministic image and lidar-style topics for Foxglove | `./anima foxglove dev` |
+
+List and inspect the bundled starter catalog:
+
+```bash
+./anima starter list
+./anima starter show starter-sim
+./anima starter show starter-sensors
+```
+
+## GHCR Install
+
+GHCR is the only supported registry in this phase.
+
+Pull the published images:
+
+```bash
+docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop
+docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-dev
+docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-sim
+```
+
+Run the desktop image:
 
 ```bash
 docker run --rm \
@@ -92,142 +76,76 @@ docker run --rm \
   ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop
 ```
 
-If you use the published image directly, set your own password. The local checkout flow is what auto-generates credentials for you.
+Run the dev or sim images with the desktop entrypoint:
 
-If you prefer one branded entrypoint instead of Make targets, use:
+```bash
+docker run --rm \
+  -e VNC_PASSWORD=change-me \
+  -p 6080:6080 \
+  -p 5901:5901 \
+  -p 8080:8080 \
+  -p 8765:8765 \
+  ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-dev \
+  desktop
+```
+
+```bash
+docker run --rm \
+  -e VNC_PASSWORD=change-me \
+  -p 6080:6080 \
+  -p 5901:5901 \
+  -p 8080:8080 \
+  -p 8765:8765 \
+  ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-sim \
+  desktop
+```
+
+## Trust Strip
+
+Current benchmark snapshot from [docs/MEASUREMENTS.md](docs/MEASUREMENTS.md):
+
+| Tag | Startup To Ready | Local arm64 Image Size |
+| --- | --- | --- |
+| `jazzy-desktop` | `7.2s` | `0.81 GiB` |
+| `jazzy-dev` | `5.8s` | `0.83 GiB` |
+| `jazzy-sim` | `5.4s` | `1.03 GiB` |
+
+Current validation surface:
+
+- Apple Silicon source checkout validated on `2026-04-01`
+- compose config checked for default, `dev`, `sim`, and bind-mounted modes
+- starter smoke coverage for `starter-visualization`, `starter-sim`, and `starter-sensors`
+- signed release images and attached SBOM artifacts defined in [docs/RELEASE_GUIDE.md](docs/RELEASE_GUIDE.md)
+- WebRTC is preview-only and is not the default support path
+
+## Key Commands
 
 ```bash
 ./anima up
-```
-
-Useful follow-ups:
-
-```bash
 ./anima status
-./anima env
 ./anima password
-./anima demo
 ./anima starter list
 ./anima starter run starter-visualization
+./anima starter run starter-sim
+./anima starter run starter-sensors
 ./anima foxglove dev
-./anima up --hardware usb
-./anima up --transport webrtc
+./anima stop
 ```
 
-If you want the raw Compose path instead:
+## Docs
 
-```bash
-./scripts/compose.sh up --build
-```
+- Mac quickstart: [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md)
+- Commands: [docs/COMMANDS.md](docs/COMMANDS.md)
+- Support matrix: [docs/SUPPORT_MATRIX.md](docs/SUPPORT_MATRIX.md)
+- Release guide: [docs/RELEASE_GUIDE.md](docs/RELEASE_GUIDE.md)
+- Measurements: [docs/MEASUREMENTS.md](docs/MEASUREMENTS.md)
+- Image matrix: [docs/IMAGE_MATRIX.md](docs/IMAGE_MATRIX.md)
+- Hardware overlays: [docs/HARDWARE.md](docs/HARDWARE.md)
+- Devcontainer workflow: [docs/DEVCONTAINER.md](docs/DEVCONTAINER.md)
 
-The helper layer auto-selects:
+## Community
 
-- `.env.mac` on Apple Silicon Macs
-- `.env.intel` on Intel Macs
-- `.env.dev` and `.env.sim` for generic non-mac profile helpers
-- `.env` if you create a custom override
-- `ANIMA_HARDWARE_PROFILE` to opt into USB, serial, camera, or audio overlays
-
-Use `./anima env` to see the fully resolved runtime configuration instead of only the selected env filename.
-The default browser URL is the noVNC desktop on `http://127.0.0.1:6080`. WebRTC remains an opt-in preview path on `http://127.0.0.1:8080`.
-
-If you want helper commands:
-
-```bash
-make up
-make shell
-make stop
-make demo
-make password
-make foxglove
-```
-
-If you want a bind-mounted host workspace instead of the default named volume:
-
-```bash
-./anima up --bind ./workspace
-```
-
-If you want CycloneDDS instead of Fast DDS:
-
-```bash
-./anima up --dds cyclonedds
-```
-
-If you want the Mac-specific path:
-
-Open [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md).
-
-If you are on Linux with an NVIDIA GPU:
-
-```bash
-docker compose up --build sim-nvidia
-```
-
-To build the GPU matrix:
-
-```bash
-docker buildx bake gpu
-```
-
-To build the full image matrix in parallel:
-
-```bash
-docker buildx bake
-```
-
-To build a single target:
-
-```bash
-docker buildx bake jazzy-dev
-```
-
-Release and image versioning are now driven from [`VERSION`](VERSION). Tagged releases publish multi-arch GHCR images and create a GitHub Release automatically.
-
-## Layout
-
-```text
-.
-├── .github/
-│   ├── FUNDING.yml
-│   ├── ISSUE_TEMPLATE/
-│   └── workflows/
-├── docker/
-│   ├── Dockerfile
-│   ├── entrypoint.sh
-│   └── start-desktop.sh
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── COMMANDS.md
-│   ├── ROADMAP.md
-│   └── STARTER_PRODUCT_PLAN.md
-├── SECURITY.md
-├── CONTRIBUTING.md
-├── Makefile
-├── VERSION
-├── scripts/
-│   ├── start.sh
-│   ├── modules.sh
-│   ├── smoke_cli_up.sh
-│   ├── smoke_modules.sh
-│   └── demo_workspace.sh
-├── examples/
-│   ├── robotflowlabs_anima_demo/
-│   ├── robotflowlabs_anima_pubsub/
-│   └── robotflowlabs_anima_starter/
-├── compose.yaml
-└── docker-bake.hcl
-```
-
-## Current Status
-
-This repository root is the RobotFlowLabs ANIMA product repo.
-
-The current scaffold already includes:
-
-- generated local desktop credentials
-- bundled workspace, graph, and visualization starter packs
-- named-volume and bind-mounted workspace modes
-- Fast DDS and CycloneDDS runtime selection
-- Foxglove bridge support on the dev and sim profiles
-- GHCR publishing and multi-arch release automation
+- Contributing guide: [CONTRIBUTING.md](CONTRIBUTING.md)
+- Code of conduct: [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+- Security policy: [SECURITY.md](SECURITY.md)
+- Public security guidance: [docs/SECURITY.md](docs/SECURITY.md)

@@ -1,12 +1,27 @@
 # RobotFlowLabs ANIMA Release Guide
 
-## Audience
+This guide is the copy-paste install and verification contract for published releases.
 
-This guide is for users who want to install ANIMA from published images and for maintainers who cut tagged releases.
+## Registry Contract
 
-## End-User Install Paths
+GHCR is the only supported registry in this phase.
 
-### Source checkout
+Stable public tags:
+
+- `ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop`
+- `ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-dev`
+- `ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-sim`
+- `ghcr.io/RobotFlow-Labs/anima-ros2:latest` as the convenience alias for `jazzy-desktop`
+
+Immutable release tags:
+
+- `ghcr.io/RobotFlow-Labs/anima-ros2:v<version>-jazzy-desktop`
+- `ghcr.io/RobotFlow-Labs/anima-ros2:v<version>-jazzy-dev`
+- `ghcr.io/RobotFlow-Labs/anima-ros2:v<version>-jazzy-sim`
+
+## Source Checkout
+
+Use the repo checkout when you want the helper CLI, starter catalog, and local workspace lifecycle:
 
 ```bash
 make up
@@ -18,69 +33,110 @@ Or:
 ./anima up
 ```
 
-That path is best when you want to develop from the repo and keep the helper CLI available.
+## Published Image Paths
 
-### Published image
-
-Pick the image by use case:
+### `jazzy-desktop`
 
 ```bash
 docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop
-docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-dev
-docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-sim
-docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-sim-nvidia
+docker run --rm \
+  -e VNC_PASSWORD=change-me \
+  -p 6080:6080 \
+  -p 5901:5901 \
+  -p 8080:8080 \
+  -p 8765:8765 \
+  ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop
 ```
 
-Recommended default:
+### `jazzy-dev`
 
 ```bash
-ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop
+docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-dev
+docker run --rm \
+  -e VNC_PASSWORD=change-me \
+  -p 6080:6080 \
+  -p 5901:5901 \
+  -p 8080:8080 \
+  -p 8765:8765 \
+  ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-dev \
+  desktop
 ```
 
-`latest` points to the same public default as `jazzy-desktop`.
+### `jazzy-sim`
 
-## Tag Selection
+```bash
+docker pull ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-sim
+docker run --rm \
+  -e VNC_PASSWORD=change-me \
+  -p 6080:6080 \
+  -p 5901:5901 \
+  -p 8080:8080 \
+  -p 8765:8765 \
+  ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-sim \
+  desktop
+```
 
-- `jazzy-desktop` is the default public offer.
-- `jazzy-dev` adds developer tooling and Foxglove.
-- `jazzy-sim` adds simulation-oriented packages.
-- `jazzy-sim-nvidia` is for Linux hosts with NVIDIA GPU passthrough.
-- `latest` is the same image as `jazzy-desktop` and should be treated as the default public path.
+## Starter Flows After Source Checkout
 
-## Release Contents
+```bash
+./anima starter run starter-visualization
+./anima foxglove dev
+```
 
-Tagged releases should make it obvious:
+```bash
+./anima starter run starter-sim
+```
 
-- which image tag to use
-- which host OS and architecture are supported
-- which transport is default
-- which features are experimental
-- how to install `starter-visualization`
+```bash
+./anima starter run starter-sensors
+./anima foxglove dev
+```
 
-This repository now attaches the release guide and support matrix to the GitHub Release so the public release carries its own install and support contract.
+## Signature Verification
+
+Published releases use Cosign keyless signing through GitHub Actions OIDC.
+
+Install Cosign, then verify a release-pinned tag:
+
+```bash
+VERSION=<version>
+IMAGE="ghcr.io/RobotFlow-Labs/anima-ros2:v${VERSION}-jazzy-desktop"
+
+cosign verify \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-identity-regexp 'https://github.com/RobotFlow-Labs/anima-docker-ros2/.github/workflows/publish.yml@refs/tags/v.*' \
+  "${IMAGE}"
+```
+
+Repeat with `v${VERSION}-jazzy-dev` and `v${VERSION}-jazzy-sim` when you want to verify the full stable set.
+
+## SBOM Artifacts
+
+Each tagged release attaches SPDX JSON SBOM files for the immutable stable tags:
+
+- `v<version>-jazzy-desktop.spdx.json`
+- `v<version>-jazzy-dev.spdx.json`
+- `v<version>-jazzy-sim.spdx.json`
+
+The release also attaches:
+
+- `INSTALL_CONTRACT.txt`
+- `published-digests.txt`
+- `docs/SUPPORT_MATRIX.md`
+- `docs/RELEASE_GUIDE.md`
+- `docs/MEASUREMENTS.md`
+
+Quick local inspection example:
+
+```bash
+jq '.packages | length' "v<version>-jazzy-desktop.spdx.json"
+```
 
 ## Maintainer Release Flow
 
 1. Update `VERSION`.
-2. Merge the release branch or tag the release commit.
-3. Push the tag that matches `VERSION`.
-4. Let the publish workflow build and push multi-arch images.
-5. Review the GitHub Release notes and attached support assets.
-
-## What To Verify Before Publishing
-
-- `./anima doctor` passes on the target host class.
-- `./scripts/smoke_cli_up.sh` passes.
-- `./scripts/smoke_modules.sh` passes.
-- The support matrix still matches the actual tag and host support.
-
-## Release Notes Contract
-
-Release notes should tell a user:
-
-- what changed
-- what image to pull
-- what host classes are supported
-- what is still experimental
-
-The release notes should not force the reader back into the repository docs to answer those questions.
+2. Ensure the starter smoke jobs and compose validation pass.
+3. Tag the release commit with `v<VERSION>`.
+4. Push the tag.
+5. Let the publish workflow push images, generate SBOMs, sign stable digests, and attach release artifacts.
+6. Confirm the release page exposes the install contract, digests, support matrix, release guide, and SBOMs.

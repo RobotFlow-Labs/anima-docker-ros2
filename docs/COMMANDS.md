@@ -13,9 +13,10 @@ The repo exposes the same workflow through three surfaces:
 ./anima status
 ./anima password
 ./anima shell
-./anima demo
 ./anima starter list
 ./anima starter run starter-visualization
+./anima starter run starter-sim
+./anima starter run starter-sensors
 ./anima foxglove dev
 ./anima stop
 ```
@@ -38,6 +39,8 @@ With runtime options:
 ./anima up --hardware usb
 ./anima up --hardware serial
 ```
+
+`--transport webrtc` remains preview-only. The default transport is still noVNC.
 
 Equivalent Make targets:
 
@@ -107,6 +110,8 @@ Inspect a starter pack:
 
 ```bash
 ./anima starter show starter-visualization
+./anima starter show starter-sim
+./anima starter show starter-sensors
 ```
 
 Install the flagship starter bundle into `/workspaces/anima/src`:
@@ -121,10 +126,25 @@ Install the flagship starter bundle, start its recommended profile, and run it:
 ./anima starter run starter-visualization
 ```
 
+Run the Gazebo starter on the noVNC desktop:
+
+```bash
+./anima starter run starter-sim
+```
+
+Run the synthetic sensor starter for Foxglove:
+
+```bash
+./anima starter run starter-sensors
+./anima foxglove dev
+```
+
 Run the pack smoke test without touching the active workspace:
 
 ```bash
 ./anima starter test starter-visualization
+./anima starter test starter-sim
+./anima starter test starter-sensors
 ```
 
 Remove the installed pack from the workspace:
@@ -135,6 +155,8 @@ Remove the installed pack from the workspace:
 
 `./anima module ...` remains a legacy alias for the same starter workflow.
 `starter-visualization` is the default first-run starter and recommends the `dev` profile.
+`starter-sim` is the noVNC-first Gazebo proof path and recommends the `sim` profile.
+`starter-sensors` is the Foxglove-first synthetic replay path and recommends the `dev` profile.
 
 ## Workspace Modes
 

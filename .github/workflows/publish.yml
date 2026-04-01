@@ -77,6 +77,58 @@ jobs:
             --set "*.platforms=linux/amd64,linux/arm64" \
             --push
 
+      - name: Write install contract
+        env:
+          VERSION: ${{ steps.resolved.outputs.version }}
+          REGISTRY_PREFIX: ghcr.io/RobotFlow-Labs/anima-ros2
+        run: |
+          set -euo pipefail
+          mkdir -p dist/release/sbom
+          cat > dist/release/INSTALL_CONTRACT.txt <<EOF
+          Registry: ${REGISTRY_PREFIX}
+          Stable convenience tags:
+          - ${REGISTRY_PREFIX}:jazzy-desktop
+          - ${REGISTRY_PREFIX}:jazzy-dev
+          - ${REGISTRY_PREFIX}:jazzy-sim
+          - ${REGISTRY_PREFIX}:latest (same digest as jazzy-desktop)
+
+          Immutable release tags:
+          - ${REGISTRY_PREFIX}:v${VERSION}-jazzy-desktop
+          - ${REGISTRY_PREFIX}:v${VERSION}-jazzy-dev
+          - ${REGISTRY_PREFIX}:v${VERSION}-jazzy-sim
+
+          GHCR is the only supported registry in this release phase.
+          EOF
+
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Generate SBOMs and sign stable digests
+        env:
+          VERSION: ${{ steps.resolved.outputs.version }}
+          REGISTRY_PREFIX: ghcr.io/RobotFlow-Labs/anima-ros2
+        run: |
+          set -euo pipefail
+
+          images=(
+            "${REGISTRY_PREFIX}:v${VERSION}-jazzy-desktop"
+            "${REGISTRY_PREFIX}:v${VERSION}-jazzy-dev"
+            "${REGISTRY_PREFIX}:v${VERSION}-jazzy-sim"
+          )
+
+          : > dist/release/published-digests.txt
+
+          for image in "${images[@]}"; do
+            tag="${image##*:}"
+            syft "${image}" -o "spdx-json=dist/release/sbom/${tag}.spdx.json"
+            digest="$(docker buildx imagetools inspect "${image}" --format '{{json .Manifest.Digest}}' | tr -d '"')"
+            printf '%s@%s\n' "${image}" "${digest}" >> dist/release/published-digests.txt
+            cosign sign --yes "${image}@${digest}"
+          done
+
       - name: Create GitHub release
         if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v2
@@ -84,5 +136,9 @@ jobs:
           generate_release_notes: true
           files: |
             VERSION
+            dist/release/INSTALL_CONTRACT.txt
+            dist/release/published-digests.txt
+            dist/release/sbom/*.spdx.json
+            docs/MEASUREMENTS.md
             docs/SUPPORT_MATRIX.md
             docs/RELEASE_GUIDE.md

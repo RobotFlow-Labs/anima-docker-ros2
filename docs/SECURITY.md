@@ -11,7 +11,8 @@
 
 ## Important Notes
 
-- The helper layer now generates a local VNC password automatically when you do not set one explicitly.
+- The helper layer now generates a local desktop password automatically when you do not set one explicitly.
+- The effective transport credential is normalized to 8 characters so the password shown by `./anima password` matches what noVNC/TigerVNC accepts.
 - Use `./anima password` to inspect the generated credential and `./anima password reset` to rotate it.
 - If you set `VNC_PASSWORD` in your env file, that explicit value overrides the generated local secret.
 - This repository intentionally avoids patching the noVNC UI with a hardcoded plaintext password.

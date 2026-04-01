@@ -35,6 +35,17 @@ Options:
 EOF
 }
 
+is_featured_starter() {
+  case "${1:-}" in
+    starter-visualization|starter-sim|starter-sensors)
+      return 0
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+}
+
 is_command() {
   case "${1:-}" in
     list|show|install|remove|run|test|help|-h|--help)
@@ -103,6 +114,8 @@ load_runtime_context() {
     return
   fi
 
+  local requested_profile="${ANIMA_PROFILE:-}"
+  local requested_distro="${ROS_DISTRO:-}"
   local env_file="${ANIMA_ENV_FILE:-$("${ROOT_DIR}/scripts/resolve_env.sh")}"
   if [[ ! -f "${env_file}" ]]; then
     echo "env file not found: ${env_file}" >&2
@@ -111,6 +124,12 @@ load_runtime_context() {
 
   # shellcheck disable=SC1090
   set -a && source "${env_file}" && set +a
+  if [[ -n "${requested_profile}" ]]; then
+    export ANIMA_PROFILE="${requested_profile}"
+  fi
+  if [[ -n "${requested_distro}" ]]; then
+    export ROS_DISTRO="${requested_distro}"
+  fi
   export ANIMA_RUNTIME_CONTEXT_LOADED=1
   export ANIMA_RUNTIME_ENV_FILE="${env_file}"
   export ANIMA_RUNTIME_PROFILE="${ANIMA_PROFILE:-desktop}"
@@ -227,15 +246,38 @@ exec_in_profile() {
   env ANIMA_PROFILE="${profile}" "${ROOT_DIR}/scripts/compose.sh" exec -T \
     -e MODULE_ID="${MODULE_ID}" \
     -e MODULE_RUN_COMMAND="${MODULE_RUN_COMMAND}" \
+    -e DISPLAY="${DISPLAY:-:1}" \
+    -e XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-ubuntu}" \
     desktop bash -lc "${script}"
 }
 
 list_modules() {
   local manifest
-  echo "RobotFlowLabs ANIMA starter packs"
+  local printed_components="false"
+  local featured_manifest
   shopt -s nullglob
+  echo "RobotFlowLabs ANIMA starter packs"
+  for featured_manifest in \
+    "${MODULE_DIR}/starter-visualization.env" \
+    "${MODULE_DIR}/starter-sim.env" \
+    "${MODULE_DIR}/starter-sensors.env"; do
+    [[ -f "${featured_manifest}" ]] || continue
+    load_manifest "${featured_manifest}"
+    printf '[starter] %-22s %-8s %s\n' "${MODULE_ID}" "${MODULE_VERSION}" "${MODULE_TITLE}"
+    printf '          %s\n' "${MODULE_SUMMARY}"
+    printf '          distros: %s\n' "$(render_list "${MODULE_SUPPORTED_DISTROS}")"
+    printf '          profiles: %s\n' "$(render_list "${MODULE_SUPPORTED_PROFILES}")"
+  done
   for manifest in "${MODULE_DIR}"/*.env; do
     load_manifest "${manifest}"
+    if is_featured_starter "${MODULE_ID}"; then
+      continue
+    fi
+    if [[ "${printed_components}" != "true" ]]; then
+      echo
+      echo "RobotFlowLabs ANIMA component bundles"
+      printed_components="true"
+    fi
     printf '[info] %-22s %-8s %s\n' "${MODULE_ID}" "${MODULE_VERSION}" "${MODULE_TITLE}"
     printf '       %s\n' "${MODULE_SUMMARY}"
     printf '       distros: %s\n' "$(render_list "${MODULE_SUPPORTED_DISTROS}")"
@@ -447,6 +489,8 @@ run_module() {
 
   exec_in_profile "${target_profile}" '
     set -euo pipefail
+    export DISPLAY="${DISPLAY:-:1}"
+    export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-${USER:-ubuntu}}"
     cd /workspaces/anima
     colcon build
     set +u

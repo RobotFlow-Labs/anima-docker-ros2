@@ -30,6 +30,29 @@ Open:
 - `http://127.0.0.1:6080`
 - optional WebRTC: `./anima up --transport webrtc`
 
+For the first meaningful ROS 2 result, install the starter bundle and launch the pub/sub demo:
+
+```bash
+./anima module install starter
+./anima shell
+cd /workspaces/anima
+colcon build
+source install/setup.bash
+ros2 launch robotflowlabs_anima_pubsub pubsub_demo.launch.py
+```
+
+If you want the published image instead of a local checkout, run:
+
+```bash
+docker run --rm \
+  -e VNC_PASSWORD=change-me \
+  -p 6080:6080 \
+  -p 5901:5901 \
+  -p 8080:8080 \
+  -p 8765:8765 \
+  ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop
+```
+
 ## Optional Helper Commands
 
 ```bash
@@ -109,6 +132,7 @@ If you need Linux hardware passthrough, opt into one of the overlays:
 ```
 
 The device-specific notes live in [docs/HARDWARE.md](HARDWARE.md).
+If you run the published image directly, set your own password. The checkout flow is the path that auto-generates credentials.
 
 If you want to inspect the resolved runtime config before starting:
 

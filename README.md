@@ -1,19 +1,25 @@
 # RobotFlowLabs ANIMA ROS 2
 
-RobotFlowLabs ANIMA ROS 2 is a public, free, open-source ROS 2 developer OS built as a layered container stack rather than a single monolithic desktop image.
+RobotFlowLabs ANIMA ROS 2 is the fastest ROS 2 starter desktop for Mac and Linux: one command, browser access, and starter workflows that work on day one.
 
-The goal is simple:
+It is the market-facing starter product adjacent to ANIMA, not the full ANIMA platform.
 
-- fast local onboarding for ROS 2 developers
-- modular images for CLI, desktop, dev, and simulation use cases
-- parallel multi-target builds with `docker buildx bake`
-- a single `./anima` CLI for the common local workflow
+Best for:
+
+- ROS 2 developers who do not want a local ROS install
+- teams that need a browser-based desktop for onboarding and demos
+- robotics education, simulation, and starter workflows that need to be reproducible
+
+What you get:
+
+- a noVNC-first desktop with an optional WebRTC preview path
+- layered CLI, desktop, dev, and simulation images
+- a single `./anima` CLI and matching `make` targets
 - a starter ROS 2 demo package that users can build immediately
 - bundled ANIMA workspace modules that can be installed on demand
 - generated local desktop credentials instead of a hardcoded default password
-- DDS selection and Foxglove bridge support for richer ROS 2 workflows
-- opt-in hardware overlays for USB, serial, camera, and audio passthrough
-- a clean product repo with local upstream references kept outside the tracked source tree
+- DDS selection, Foxglove bridge support, and opt-in hardware overlays
+- a clean product repo with local reference materials kept outside the tracked source tree
 
 If you are on a Mac, start with [docs/QUICKSTART_MAC.md](docs/QUICKSTART_MAC.md).
 For device passthrough details, see [docs/HARDWARE.md](docs/HARDWARE.md).
@@ -51,7 +57,7 @@ Supported distro matrix for the initial public pass:
 
 ## Quick Start
 
-If Docker Desktop is running, the easiest path is:
+If Docker Desktop is running, the fastest path is:
 
 ```bash
 make up
@@ -66,6 +72,31 @@ That is the default adoption path:
 - no local workspace setup
 - no manual port wiring
 - no extra flags
+
+If you want the first meaningful ROS 2 result, use the starter bundle:
+
+```bash
+./anima module install starter
+./anima shell
+cd /workspaces/anima
+colcon build
+source install/setup.bash
+ros2 launch robotflowlabs_anima_pubsub pubsub_demo.launch.py
+```
+
+If you want the published image instead of a local checkout, pull and run the GHCR desktop image directly:
+
+```bash
+docker run --rm \
+  -e VNC_PASSWORD=change-me \
+  -p 6080:6080 \
+  -p 5901:5901 \
+  -p 8080:8080 \
+  -p 8765:8765 \
+  ghcr.io/RobotFlow-Labs/anima-ros2:jazzy-desktop
+```
+
+If you use the published image directly, set your own password. The local checkout flow is what auto-generates credentials for you.
 
 If you prefer one branded entrypoint instead of Make targets, use:
 
@@ -103,7 +134,7 @@ The helper layer auto-selects:
 - `ANIMA_HARDWARE_PROFILE` to opt into USB, serial, camera, or audio overlays
 
 Use `./anima env` to see the fully resolved runtime configuration instead of only the selected env filename.
-The default browser URL is the noVNC desktop on `http://127.0.0.1:6080`. WebRTC remains an opt-in best-effort path on `http://127.0.0.1:8080`.
+The default browser URL is the noVNC desktop on `http://127.0.0.1:6080`. WebRTC remains an opt-in preview path on `http://127.0.0.1:8080`.
 
 If you want helper commands:
 
@@ -173,17 +204,21 @@ Release and image versioning are now driven from [`VERSION`](VERSION). Tagged re
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── COMMANDS.md
-│   └── ROADMAP.md
+│   ├── ROADMAP.md
+│   └── STARTER_PRODUCT_PLAN.md
 ├── SECURITY.md
 ├── CONTRIBUTING.md
 ├── Makefile
 ├── VERSION
 ├── scripts/
 │   ├── start.sh
-│   ├── smoke_demo_workspace.sh
+│   ├── modules.sh
+│   ├── smoke_cli_up.sh
+│   ├── smoke_modules.sh
 │   └── sync_reference.sh
 ├── examples/
-│   └── robotflowlabs_anima_demo/
+│   ├── robotflowlabs_anima_demo/
+│   └── robotflowlabs_anima_pubsub/
 ├── compose.yaml
 └── docker-bake.hcl
 ```
@@ -191,8 +226,6 @@ Release and image versioning are now driven from [`VERSION`](VERSION). Tagged re
 ## Current Status
 
 This repository root is the RobotFlowLabs ANIMA product repo.
-
-The original `Tiryoh/docker-ros2-desktop-vnc` clone is kept locally under `repositories/docker-ros2-desktop-vnc` and stays gitignored. It is a reference implementation, not the tracked source tree.
 
 The current scaffold already includes:
 
